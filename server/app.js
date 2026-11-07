@@ -75,6 +75,42 @@ app.disable("x-powered-by");
 app.set("view engine", "ejs");
 app.set("views", viewsDir);
 
+// ── إعداد ناقص على Netlify ─────────────────────────────────
+// لا تقتل الدالة عند الإقلاع (Runtime.ExitError / exit status 1)؛
+// اعرض صفحة عربية تشرح المتغيرات الناقصة وكيفية إضافتها.
+if (!env.isConfigured) {
+  app.use((req, res) => {
+    const items = env.missingEnv
+      .map((name) => `<li><code>${name}</code></li>`)
+      .join("");
+
+    res.status(503).type("html").send(`<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>إعداد لوحة المدير غير مكتمل</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f7f4ee;color:#23201c;margin:0;padding:48px 20px;line-height:1.8}
+main{max-width:680px;margin:auto;background:#fff;border:1px solid #e3ddd2;border-radius:14px;padding:32px}
+h1{font-size:20px;margin:0 0 8px}
+p{margin:12px 0}
+code{background:#f0ece4;padding:2px 6px;border-radius:5px;font-size:13px}
+ul{padding-inline-start:22px}
+small{color:#6b655c}
+</style>
+</head>
+<body><main>
+<h1>إعداد لوحة المدير غير مكتمل</h1>
+<p>الخادم يعمل، لكن متغيرات البيئة التالية غير معرّفة، لذا لا يمكن الاتصال بـ Supabase:</p>
+<ul>${items}</ul>
+<p>أضفها من <strong>Site configuration → Environment variables</strong> في لوحة Netlify ثم أعد النشر. لا تضع القيم داخل المستودع.</p>
+<p><small>إن كان النشر «Based on Dropped files» فاربط الموقع بمستودع GitHub بدلاً منه؛ النشر اليدوي لا يقرأ <code>netlify.toml</code> ولا يتيح ضبط المتغيرات.</small></p>
+</main></body></html>`);
+  });
+}
+
 // ── ترويسات أساسية ─────────────────────────────────────────
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
