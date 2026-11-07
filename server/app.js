@@ -1,7 +1,7 @@
 import express from "express";
+import ejs from "ejs";
 import path from "node:path";
 import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { env } from "./env.js";
 import { fail } from "./http.js";
 import { readSession } from "./middleware/require-admin.js";
@@ -27,15 +27,27 @@ import { pendingReviewsCount } from "./services/reviews.service.js";
  * لا تُبنى الصفحات مسبقاً؛ تُرسَم على الخادم عند كل طلب.
  */
 
-const root = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(root, "..");
+/**
+ * تحديد جذر المشروع دون الاعتماد على `import.meta.url`.
+ *
+ * مهم: مُجمّع Netlify (esbuild) يُخرج الدالة بصيغة CommonJS، فيصبح
+ * `import.meta` كائناً فارغاً ويكون `fileURLToPath(undefined)` خطأً قاتلاً
+ * عند إقلاع الدالة (`ERR_INVALID_ARG_TYPE`). لذلك نعتمد على مجلد التنفيذ:
+ *  - محلياً: `npm start` يُشغَّل من جذر المشروع → process.cwd() هو الجذر.
+ *  - على Lambda: process.cwd() هو جذر حزمة الدالة (LAMBDA_TASK_ROOT).
+ * ويمكن تجاوز ذلك بمتغير PROJECT_ROOT عند الحاجة.
+ */
+const projectRoot = process.env.PROJECT_ROOT || process.cwd();
+const bundleDir = typeof __dirname === "undefined" ? process.cwd() : __dirname;
 
 /**
  * هل نعمل داخل دالة سيرفرلس؟ (Netlify Functions تعمل على AWS Lambda)
- * نعتمد على إشارة البيئة، ومعها فحص نظام الملفات كاحتياط: داخل حزمة
- * الدالة لا يوجد مجلد `views` بجوار `server/` الأصلي.
+ * نعتمد على إشارة البيئة، ومعها فحص نظام الملفات كاحتياط: حزمة الدالة
+ * تحتوي `views/**` لكنها لا تحتوي `netlify.toml` الموجود في المشروع المحلي.
  */
-const hasLocalProjectFiles = existsSync(path.join(projectRoot, "views"));
+const hasLocalProjectFiles =
+  existsSync(path.join(projectRoot, "views")) &&
+  existsSync(path.join(projectRoot, "netlify.toml"));
 const isServerless =
   Boolean(
     process.env.AWS_LAMBDA_FUNCTION_NAME ||
@@ -63,17 +75,24 @@ const assetBase =
 const viewsCandidates = [
   process.env.VIEWS_DIR,
   path.join(projectRoot, "views"),
-  path.join(process.cwd(), "views"),
-  path.join(root, "views"),
+  path.join(bundleDir, "views"),
+  path.join(bundleDir, "..", "views"),
+  path.join(process.env.LAMBDA_TASK_ROOT || bundleDir, "views"),
 ].filter(Boolean);
 const viewsDir =
-  viewsCandidates.find((candidate) => existsSync(candidate)) || viewsCandidates[1];
+  viewsCandidates.find((candidate) => existsSync(candidate)) ||
+  path.join(projectRoot, "views");
 
 const app = express();
 
 app.disable("x-powered-by");
 app.set("view engine", "ejs");
 app.set("views", viewsDir);
+
+// Express يُحمّل محرك القوالب بـ require ديناميكي (`require("ejs")`)،
+// وهو ما لا يراه مُجمّع esbuild داخل حزمة Netlify → "Cannot find module ejs".
+// بتسجيل المحرك صراحةً يصبح استيراد ejs ثابتاً ويُضمَّن في الحزمة.
+app.engine("ejs", ejs.renderFile);
 
 // ── إعداد ناقص على Netlify ─────────────────────────────────
 // لا تقتل الدالة عند الإقلاع (Runtime.ExitError / exit status 1)؛
