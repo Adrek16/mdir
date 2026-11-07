@@ -1,0 +1,77 @@
+/* ══════════════════════════════════════════════════════════
+   صفحة الطلبات
+   ══════════════════════════════════════════════════════════ */
+
+.m-table--orders td:first-child {
+  width: 11rem;
+  max-width: 11rem;
+}
+
+.m-table--orders td:first-child .m-cell-id {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.m-table--orders tbody tr[data-order] td:last-child {
+  text-align: end;
+}
+
+.m-order-open {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--copper-dark);
+  background: none;
+  border: 0;
+  padding: 0.2rem 0.1rem;
+}
+
+.m-order-open:hover {
+  text-decoration: underline;
+}
+
+#order-dialog .m-badges {
+  margin-top: -0.2rem;
+}
+
+#order-dialog .m-data dd {
+  font-weight: 600;
+}
+
+#order-phone {
+  direction: ltr;
+}
+
+#order-id {
+  direction: ltr;
+  text-align: start;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+#order-note {
+  min-width: 12rem;
+}
+
+#order-proof {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.m-review .m-hint {
+  margin-top: 0.55rem;
+}
+
+@media (max-width: 640px) {
+  .m-table--orders th:nth-child(4),
+  .m-table--orders td:nth-child(4) {
+    display: none;
+  }
+
+  .m-review__actions .m-btn:last-child {
+    margin-inline-start: 0;
+    flex: 1 1 100%;
+  }
+}

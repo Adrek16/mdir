@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "reports" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "أرقام حقيقية من الطلبات والتقييمات" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head m-report-head">
+        <div>
+          <p class="m-eyebrow">التقارير</p>
+          <h2>أداء المتجر</h2>
+          <p id="report-period-label">آخر ٣٠ يوماً · بتوقيت صنعاء</p>
+        </div>
+
+        <div class="m-report-actions">
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="report-print">
+            <%- include("partials/icon", { name: "receipt" }) %>
+            <span>طباعة</span>
+          </button>
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="report-refresh">
+            <%- include("partials/icon", { name: "refresh" }) %>
+            <span>تحديث</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="m-card m-report-filters" aria-label="النطاق الزمني">
+        <div class="m-toolbar">
+          <label class="m-field m-field--compact">
+            <span>الفترة</span>
+            <select id="report-period">
+              <% periodOptions.forEach((option) => { %>
+                <option value="<%= option.value %>" <%= option.value === "30d" ? "selected" : "" %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact" id="report-from-wrap" hidden>
+            <span>من تاريخ</span>
+            <input id="report-from" type="date">
+          </label>
+
+          <label class="m-field m-field--compact" id="report-to-wrap" hidden>
+            <span>إلى تاريخ</span>
+            <input id="report-to" type="date">
+          </label>
+
+          <button type="button" class="m-btn m-btn--copper m-btn--sm" id="report-apply" hidden>
+            تطبيق النطاق
+          </button>
+        </div>
+      </section>
+
+      <section class="m-stats m-report-stats" aria-label="المؤشرات الرئيسية">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-copper"><%- include("partials/icon", { name: "money" }) %></div>
+          <p class="m-stat__label">الإيراد</p>
+          <p class="m-stat__value" id="kpi-revenue">—</p>
+          <p class="m-stat__hint">مؤكد + مكتمل فقط</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "orders" }) %></div>
+          <p class="m-stat__label">الطلبات</p>
+          <p class="m-stat__value" id="kpi-orders">—</p>
+          <p class="m-stat__hint"><span id="kpi-sales-orders">—</span> منها مؤكد/مكتمل</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "reports" }) %></div>
+          <p class="m-stat__label">متوسط قيمة الطلب</p>
+          <p class="m-stat__value" id="kpi-average">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "box" }) %></div>
+          <p class="m-stat__label">الوحدات المباعة</p>
+          <p class="m-stat__value" id="kpi-units">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "close" }) %></div>
+          <p class="m-stat__label">نسبة الإلغاء</p>
+          <p class="m-stat__value" id="kpi-cancel">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "users" }) %></div>
+          <p class="m-stat__label">عملاء جدد</p>
+          <p class="m-stat__value" id="kpi-new">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "star" }) %></div>
+          <p class="m-stat__label">عملاء متكررون</p>
+          <p class="m-stat__value" id="kpi-repeat">—</p>
+          <p class="m-stat__hint">طلبان مؤكدان فأكثر</p>
+        </article>
+      </section>
+
+      <section class="m-card m-report-chart">
+        <header class="m-card__head">
+          <div>
+            <h3>المبيعات عبر الزمن</h3>
+            <p id="chart-hint">جارٍ التحميل…</p>
+          </div>
+        </header>
+        <div class="m-chart" id="sales-chart" role="img" aria-label="رسم المبيعات عبر الزمن"></div>
+      </section>
+
+      <div class="m-report-grid">
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>أفضل ١٠ منتجات</h3><p>بالوحدات والإيراد داخل الفترة</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="topProducts">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>المنتج</th><th>الوحدات</th><th>الإيراد</th></tr>
+              </thead>
+              <tbody id="report-products">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>أفضل التصنيفات</h3><p>وحدات وإيراد</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="topCategories">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>التصنيف</th><th>الوحدات</th><th>الإيراد</th></tr>
+              </thead>
+              <tbody id="report-categories">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>طرق الدفع</h3><p>عدد الطلبات والمبالغ</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="payments">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>الطريقة</th><th>الطلبات</th><th>المبلغ</th></tr>
+              </thead>
+              <tbody id="report-payments">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>أفضل ١٠ عملاء</h3><p>بالإنفاق داخل الفترة</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="topCustomers">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>العميل</th><th>الطلبات</th><th>الإنفاق</th></tr>
+              </thead>
+              <tbody id="report-customers">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>حالات الطلبات</h3><p>التوزيع داخل الفترة</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="statusBreakdown">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>الحالة</th><th>الطلبات</th><th>النسبة</th></tr>
+              </thead>
+              <tbody id="report-statuses">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>المخزون المنخفض</h3><p>٥ قطع أو أقل</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="lowStock">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>المنتج</th><th>المتبقي</th></tr>
+              </thead>
+              <tbody id="report-lowstock">
+                <tr><td colspan="2" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="m-report-grid">
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>الأكثر مبيعاً</h3><p>من المبيعات المؤكدة الحقيقية</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="topSelling">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>المنتج</th><th>المبيعات</th><th>التقييم</th></tr>
+              </thead>
+              <tbody id="report-top-selling">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>الأعلى تقييماً</h3><p>من تقييمات العملاء المعتمدة</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="topRated">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>المنتج</th><th>التقييم</th><th>المراجعات</th></tr>
+              </thead>
+              <tbody id="report-top-rated">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card m-report-table">
+          <header class="m-card__head">
+            <div><h3>الإلغاءات</h3><p>آخر ٢٠ إلغاءً مع السبب إن سُجّل</p></div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--xs" data-export="cancellations">CSV</button>
+          </header>
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr><th>الطلب</th><th>العميل</th><th>السبب</th></tr>
+              </thead>
+              <tbody id="report-cancellations">
+                <tr><td colspan="3" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <p class="m-report-note">
+        كل الأرقام محسوبة من الطلبات والمنتجات والتقييمات — لا إدخال يدوي.
+        الطلبات «جديد» و«ملغي» لا تُحتسب في الإيراد.
+      </p>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

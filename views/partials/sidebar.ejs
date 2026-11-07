@@ -1,0 +1,49 @@
+<%
+  const items = [
+    { key: "dashboard", href: "/dashboard", label: "نظرة عامة", icon: "dashboard" },
+    { key: "orders", href: "/orders", label: "الطلبات", icon: "orders" },
+    { key: "products", href: "/products", label: "المنتجات", icon: "products" },
+    { key: "categories", href: "/categories", label: "التصنيفات", icon: "categories" },
+    { key: "customers", href: "/customers", label: "العملاء", icon: "users" },
+    { key: "reviews", href: "/reviews", label: "التقييمات", icon: "star" },
+    { key: "reports", href: "/reports", label: "التقارير", icon: "reports" },
+    { key: "store-info", href: "/store-info", label: "معلومات المتجر", icon: "store" },
+    { key: "settings", href: "/settings", label: "الدفع والمحافظ", icon: "settings" },
+  ];
+%>
+<aside class="m-sidebar" id="m-sidebar" aria-label="القائمة الجانبية">
+  <div class="m-sidebar__brand">
+    <span class="m-brand__mark" aria-hidden="true">س</span>
+    <span class="m-brand__text">
+      <strong>ستور</strong>
+      <small>لوحة المدير</small>
+    </span>
+    <button type="button" class="m-icon-btn m-sidebar__close" data-sidebar-close aria-label="إغلاق القائمة">
+      <%- include("icon", { name: "close" }) %>
+    </button>
+  </div>
+
+  <nav class="m-nav" aria-label="التنقل الرئيسي">
+    <ul>
+      <% items.forEach((item) => { %>
+        <li>
+          <a class="m-nav__link<%= active === item.key ? " is-active" : "" %>"
+             href="<%= item.href %>"
+             <%= active === item.key ? 'aria-current="page"' : "" %>>
+            <%- include("icon", { name: item.icon }) %>
+            <span><%= item.label %></span>
+            <% if (item.key === "reviews" && typeof pendingReviews !== "undefined" && pendingReviews > 0) { %>
+              <span class="m-nav__count" aria-label="تقييمات بانتظار المراجعة"><%= pendingReviews %></span>
+            <% } %>
+            <% if (item.soon) { %><span class="m-nav__soon">قريباً</span><% } %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  </nav>
+
+  <div class="m-sidebar__foot">
+    <p>خادم محلي</p>
+    <p class="m-sidebar__foot-note">لا يُنشر على الإنترنت</p>
+  </div>
+</aside>

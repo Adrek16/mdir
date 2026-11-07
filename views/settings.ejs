@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "settings" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "البنوك والمحافظ المحلية" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">الدفع</p>
+          <h2>الدفع والمحافظ</h2>
+          <p>
+            الطرق المفعّلة تظهر للعميل عند إتمام الطلب. أضف بنكاً أو محفظة محلية
+            (جوالي، جيب، حاسب، فلوسك، ون كاش…) واكتب اسم أي محفظة أخرى.
+          </p>
+        </div>
+      </section>
+
+      <div class="m-grid-2 m-grid-2--aside">
+        <div class="m-pay-stack">
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>طرق الدفع</h3>
+                <p>رتّبها بالأسهم، وعطّل ما لا تريده دون حذفه.</p>
+              </div>
+              <button type="button" class="m-btn m-btn--copper" id="methods-save">
+                حفظ التغييرات
+              </button>
+            </header>
+
+            <div class="m-pay-list" id="methods-list" aria-live="polite"></div>
+
+            <p class="m-form-error" id="methods-error" role="alert" hidden></p>
+            <p class="m-form-success" id="methods-success" role="status" hidden></p>
+          </section>
+
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>إضافة طريقة</h3>
+                <p>أضفها ثم اضغط «حفظ التغييرات».</p>
+              </div>
+            </header>
+
+            <form class="m-form" id="method-add-form" novalidate>
+              <div class="m-form-row">
+                <label class="m-field">
+                  <span>النوع</span>
+                  <select id="add-type" name="type">
+                    <option value="wallet">محفظة إلكترونية</option>
+                    <option value="bank">حساب بنكي</option>
+                  </select>
+                </label>
+
+                <label class="m-field">
+                  <span>الاسم</span>
+                  <input id="add-name" name="name" type="text" maxlength="80" required
+                         placeholder="مثال: جوالي">
+                </label>
+              </div>
+
+              <div class="m-form-row">
+                <label class="m-field">
+                  <span>اسم صاحب الحساب</span>
+                  <input id="add-account-name" name="accountName" type="text" maxlength="120"
+                         placeholder="مثال: مؤسسة ستور">
+                </label>
+
+                <label class="m-field">
+                  <span>رقم الحساب / المحفظة</span>
+                  <input id="add-account-number" name="accountNumber" type="text" maxlength="60"
+                         inputmode="numeric" dir="ltr" class="m-input--latin"
+                         placeholder="مثال: 770000000">
+                </label>
+              </div>
+
+              <label class="m-field">
+                <span>ملاحظة للعميل (اختياري)</span>
+                <textarea id="add-note" name="note" rows="2" maxlength="300"
+                          placeholder="مثال: حوّل المبلغ ثم ارفع صورة الإيصال."></textarea>
+              </label>
+
+              <p class="m-form-error" id="add-error" role="alert" hidden></p>
+
+              <div class="m-form__actions">
+                <button type="submit" class="m-btn m-btn--ghost" id="add-submit">
+                  إضافة إلى القائمة
+                </button>
+                <button type="button" class="m-btn m-btn--ghost" id="methods-reload">
+                  إعادة التحميل
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <aside class="m-card m-note-card">
+          <h3>قبل الحفظ</h3>
+          <ul class="m-note-list">
+            <li>رقم الحساب يظهر للعميل كما هو — راجعه رقماً برقم.</li>
+            <li>يجب إبقاء طريقة واحدة مفعّلة على الأقل إن كانت القائمة غير فارغة.</li>
+            <li>الطريقة المعطّلة تبقى محفوظة لكنها لا تظهر في المتجر.</li>
+            <li>«الدفع عند الاستلام» متاح دائماً ولا يحتاج إعداداً.</li>
+            <li>بعد الحفظ يُبلَّغ المتجر لتحديث صفحة الدفع.</li>
+          </ul>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "categories" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "أقسام الكتالوج وربطها بالمنتجات" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">الكتالوج</p>
+          <h2>إدارة التصنيفات</h2>
+          <p>أضف تصنيفاً أو عدّله — كل منتج يرتبط بتصنيف واحد، ويظهر التغيير في المتجر فور الحفظ.</p>
+        </div>
+        <button type="button" class="m-btn m-btn--copper" id="category-new">
+          <%- include("partials/icon", { name: "categories" }) %>
+          <span>تصنيف جديد</span>
+        </button>
+      </section>
+
+      <section class="m-stats" aria-label="مؤشرات التصنيفات">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "categories" }) %></div>
+          <p class="m-stat__label">إجمالي التصنيفات</p>
+          <p class="m-stat__value" id="cat-stat-total">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "check" }) %></div>
+          <p class="m-stat__label">تحتوي منتجات</p>
+          <p class="m-stat__value" id="cat-stat-filled">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "box" }) %></div>
+          <p class="m-stat__label">تصنيفات فارغة</p>
+          <p class="m-stat__value" id="cat-stat-empty">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "dot" }) %></div>
+          <p class="m-stat__label">بلا قسم رئيسي</p>
+          <p class="m-stat__value" id="cat-stat-noparent">—</p>
+        </article>
+      </section>
+
+      <section class="m-card m-filters">
+        <div class="m-toolbar">
+          <label class="m-field m-search">
+            <span class="m-sr-only">بحث</span>
+            <%- include("partials/icon", { name: "search" }) %>
+            <input id="cat-search" type="search" autocomplete="off"
+                   placeholder="اسم التصنيف، الرابط، الوصف…">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>القسم</span>
+            <select id="cat-filter-parent">
+              <option value="">الكل</option>
+              <option value="none">بلا قسم</option>
+              <% parentOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>المنتجات</span>
+            <select id="cat-filter-products">
+              <option value="">الكل</option>
+              <option value="filled">تحتوي منتجات</option>
+              <option value="empty">فارغة</option>
+            </select>
+          </label>
+
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="cat-refresh">
+            <%- include("partials/icon", { name: "refresh" }) %>
+            <span>تحديث</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="m-card m-card--table">
+        <header class="m-card__head">
+          <div>
+            <h3>التصنيفات</h3>
+            <p id="cat-count">جارٍ التحميل…</p>
+          </div>
+        </header>
+
+        <div class="m-table-wrap">
+          <table class="m-table m-table--categories">
+            <thead>
+              <tr>
+                <th scope="col">التصنيف</th>
+                <th scope="col">القسم</th>
+                <th scope="col">الجنس</th>
+                <th scope="col">المنتجات</th>
+                <th scope="col">الترتيب</th>
+                <th scope="col" class="m-table__actions">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="categories-body">
+              <tr><td colspan="6" class="m-table__empty">جارٍ التحميل…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="m-table-foot">
+          <span class="m-table-foot__hint">لا يمكن حذف تصنيف يحتوي منتجات — انقل منتجاته أولاً.</span>
+          <nav class="m-pagination" id="categories-pagination" aria-label="صفحات التصنيفات"></nav>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- نافذة إضافة/تعديل تصنيف -->
+  <dialog class="m-modal" id="category-dialog" aria-labelledby="category-dialog-title">
+    <header class="m-modal__head">
+      <div>
+        <p class="m-eyebrow" id="category-dialog-mode">تصنيف جديد</p>
+        <h2 id="category-dialog-title">إضافة تصنيف</h2>
+      </div>
+      <button type="button" class="m-icon-btn" data-close-dialog aria-label="إغلاق">
+        <%- include("partials/icon", { name: "close" }) %>
+      </button>
+    </header>
+
+    <div class="m-modal__body">
+      <form class="m-form" id="category-form" novalidate>
+        <div class="m-form-grid">
+          <label class="m-field">
+            <span>اسم التصنيف</span>
+            <input id="category-name" name="name" type="text" maxlength="80" required
+                   placeholder="مثال: عطور صيفية">
+          </label>
+
+          <div class="m-field">
+            <label for="category-name-en">الاسم بالإنجليزي</label>
+            <input id="category-name-en" name="nameEn" type="text" maxlength="80"
+                   dir="ltr" class="m-input--latin" placeholder="Summer Perfumes"
+                   aria-describedby="category-name-en-hint">
+            <small class="m-field__hint" id="category-name-en-hint">
+              يظهر في ترويسة المتجر بالإنجليزية.
+            </small>
+          </div>
+        </div>
+
+        <div class="m-form-grid">
+          <label class="m-field">
+            <span>القسم الرئيسي</span>
+            <select id="category-parent" name="parent">
+              <option value="">بلا قسم</option>
+              <% parentOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>الجنس</span>
+            <select id="category-gender" name="gender">
+              <option value="">غير محدد</option>
+              <% genderOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>الترتيب</span>
+            <input id="category-sort" name="sortOrder" type="number" min="0" step="1"
+                   inputmode="numeric" placeholder="0">
+            <small class="m-field__hint">الأصغر يظهر أولاً.</small>
+          </label>
+        </div>
+
+        <label class="m-field">
+          <span>وصف مختصر (اختياري)</span>
+          <textarea id="category-blurb" name="blurb" rows="2" maxlength="160"
+                    placeholder="سطر يظهر في صفحة التصنيف بالمتجر…"></textarea>
+        </label>
+
+        <p class="m-form-error" id="category-error" role="alert" hidden></p>
+
+        <div class="m-form__actions">
+          <button type="submit" class="m-btn m-btn--copper" id="category-save">حفظ التصنيف</button>
+          <button type="button" class="m-btn m-btn--ghost" data-close-dialog>إلغاء</button>
+          <button type="button" class="m-btn m-btn--danger" id="category-delete" hidden>حذف التصنيف</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

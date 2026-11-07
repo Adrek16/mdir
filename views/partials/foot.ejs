@@ -1,0 +1,6 @@
+<div class="m-overlay" id="m-overlay" hidden data-sidebar-close></div>
+
+<script type="module" src="<%= assetBase %>/js/shell.js"></script>
+<% if (typeof pageScript !== "undefined" && pageScript) { %>
+<script type="module" src="<%= assetBase %>/js/pages/<%= pageScript %>.js"></script>
+<% } %>

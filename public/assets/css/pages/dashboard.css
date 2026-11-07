@@ -1,0 +1,36 @@
+/* ══════════════════════════════════════════════════════════
+   الصفحة الرئيسية
+   ══════════════════════════════════════════════════════════ */
+
+#dash-date {
+  text-transform: capitalize;
+}
+
+.m-stat__value {
+  font-variant-numeric: tabular-nums;
+}
+
+#stat-value {
+  font-size: 1.45rem;
+}
+
+#recent-body .m-cell-id {
+  display: block;
+  max-width: 11rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#recent-body tr[data-order] td:last-child {
+  color: var(--ink-mute);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  #recent-body td:nth-child(5),
+  #recent-body th:nth-child(5) {
+    display: none;
+  }
+}

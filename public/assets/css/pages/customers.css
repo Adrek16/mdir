@@ -1,0 +1,98 @@
+/* ══════════════════════════════════════════════════════════
+   العملاء
+   ══════════════════════════════════════════════════════════ */
+
+.m-table--customers td:first-child {
+  min-width: 12rem;
+}
+
+.m-cell-strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.m-table--customers tbody tr[data-customer] {
+  cursor: pointer;
+}
+
+.m-table--customers tbody tr[data-customer]:hover,
+.m-table--customers tbody tr[data-customer]:focus-visible {
+  background: var(--sand);
+  outline: none;
+}
+
+.m-table--customers tbody tr[data-customer] td:last-child {
+  text-align: end;
+}
+
+.m-table--customers .m-table__actions {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* ── ملف العميل ─────────────────────────────────────────── */
+
+.m-customer-side {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.m-customer-side .m-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.m-customer-side .m-card__head {
+  padding: 0;
+  border: 0;
+}
+
+#customer-name {
+  font-size: 1.35rem;
+}
+
+#customer-email {
+  direction: ltr;
+  text-align: start;
+  color: var(--ink-mute);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+#customer-note {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+#customer-note-form {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.m-customer-orders td:first-child {
+  width: 9rem;
+}
+
+.m-customer-orders .m-cell-id {
+  display: block;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .m-table--customers th:nth-child(5),
+  .m-table--customers td:nth-child(5),
+  .m-table--customers th:nth-child(6),
+  .m-table--customers td:nth-child(6) {
+    display: none;
+  }
+}

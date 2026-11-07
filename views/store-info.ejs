@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "store-info" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "كل ما يراه العميل عن المتجر" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">المتجر</p>
+          <h2>معلومات المتجر</h2>
+          <p>عدّل هنا كل النصوص والبيانات التي تظهر للعميل في واجهة المتجر، بما فيها الشعار.</p>
+        </div>
+      </section>
+
+      <%
+        const initialLogo = (typeof logoUrl !== "undefined" && logoUrl) ? logoUrl : "";
+      %>
+
+      <div class="m-grid-2 m-grid-2--aside">
+        <section class="m-card">
+          <header class="m-card__head">
+            <div>
+              <h3>بيانات المتجر</h3>
+              <p>تُحفظ في جدول <code>settings</code> بمفتاح <code>store_info</code>، ويُبلَّغ المتجر بعد كل حفظ.</p>
+            </div>
+          </header>
+
+          <form class="m-form" id="store-info-form" novalidate>
+
+            <h4 class="m-subhead">الهوية والشعار</h4>
+
+            <label class="m-field">
+              <span>اسم المتجر (عربي)</span>
+              <input id="si-name" name="name" type="text" maxlength="120" required
+                     placeholder="مثال: ستور">
+              <small class="m-field__hint">يظهر في: الترويسة، صفحة «من نحن» وتذييل كل الصفحات.</small>
+            </label>
+
+            <label class="m-field">
+              <span>اسم المتجر (إنجليزي)</span>
+              <input id="si-name-en" name="nameEn" type="text" maxlength="120" dir="ltr"
+                     class="m-input--latin" placeholder="STOOR">
+              <small class="m-field__hint">يظهر في: الترويسة والشعار عند النسخة الإنجليزية.</small>
+            </label>
+
+            <label class="m-field">
+              <span>الشعار التعريفي (Tagline)</span>
+              <input id="si-tagline" name="tagline" type="text" maxlength="200"
+                     placeholder="عطور وإكسسوارات وحقائب">
+              <small class="m-field__hint">يظهر في: بانر الصفحة الرئيسية تحت اسم المتجر.</small>
+            </label>
+
+            <label class="m-field">
+              <span>وصف المتجر</span>
+              <textarea id="si-description" name="description" rows="3" maxlength="600"
+                        placeholder="وصف مختصر عن المتجر ومنتجاته"></textarea>
+              <small class="m-field__hint">يظهر في: وصف الموقع (SEO) ومقدمة الصفحة الرئيسية.</small>
+            </label>
+
+            <div class="m-field m-logo-field">
+              <span>شعار المتجر (الصورة)</span>
+              <div class="m-logo-preview">
+                <img id="si-logo-preview" class="m-logo-preview__img" alt="معاينة شعار المتجر"
+                     <% if (initialLogo) { %>src="<%= initialLogo %>"<% } else { %>hidden<% } %>>
+                <span class="m-logo-preview__empty" id="si-logo-empty" <%= initialLogo ? "hidden" : "" %>>لا يوجد شعار مرفوع</span>
+              </div>
+              <div class="m-logo-actions">
+                <label class="m-btn m-btn--ghost m-btn--sm m-logo-pick" for="si-logo-input">اختيار صورة</label>
+                <input id="si-logo-input" name="logo" type="file"
+                       accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+                <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="si-logo-remove"
+                        <%= initialLogo ? "" : "hidden" %>>إزالة الشعار</button>
+              </div>
+              <small class="m-field__hint">PNG / JPEG / WebP / AVIF، بحد أقصى 2 ميغابايت. يُرفع على الخادم ولا يُرسل من المتصفح مباشرة.</small>
+              <small class="m-field__hint m-logo-status" id="si-logo-status" hidden></small>
+            </div>
+
+            <h4 class="m-subhead">بانر الترحيب — الصفحة الرئيسية</h4>
+
+            <label class="m-field">
+              <span>سطر الترحيب الأول</span>
+              <input id="si-welcome-line1" name="welcomeLine1" type="text" maxlength="120"
+                     placeholder="بريقٌ يبقى،">
+              <small class="m-field__hint">يظهر في: السطر الأول لبانر الترحيب في الصفحة الرئيسية.</small>
+            </label>
+
+            <label class="m-field">
+              <span>سطر الترحيب الثاني</span>
+              <input id="si-welcome-line2" name="welcomeLine2" type="text" maxlength="120"
+                     placeholder="ورائحةٌ تُذكر.">
+              <small class="m-field__hint">يظهر في: السطر الثاني لبانر الترحيب في الصفحة الرئيسية.</small>
+            </label>
+
+            <label class="m-field">
+              <span>فقرة الترحيب</span>
+              <textarea id="si-welcome-body" name="welcomeBody" rows="3" maxlength="600"></textarea>
+              <small class="m-field__hint">يظهر في: فقرة الترحيب أسفل البانر في الصفحة الرئيسية.</small>
+            </label>
+
+            <h4 class="m-subhead">قسم «من نحن»</h4>
+
+            <label class="m-field">
+              <span>نص «من نحن»</span>
+              <textarea id="si-about" name="about" rows="3" maxlength="600"></textarea>
+              <small class="m-field__hint">يظهر في: قسم «من نحن» في صفحة المعلومات.</small>
+            </label>
+
+            <h4 class="m-subhead">العنوان والتواصل — صفحة «اتصل بنا» والتذييل</h4>
+
+            <label class="m-field">
+              <span>ساعات العمل</span>
+              <input id="si-working-hours" name="workingHours" type="text" maxlength="160"
+                     placeholder="من 9 صباحاً إلى 9 مساءً">
+              <small class="m-field__hint">يظهر في: صفحة «اتصل بنا» وتذييل الصفحات.</small>
+            </label>
+
+            <label class="m-field">
+              <span>العنوان</span>
+              <input id="si-address" name="address" type="text" maxlength="200"
+                     placeholder="صنعاء، اليمن">
+              <small class="m-field__hint">يظهر في: صفحة «اتصل بنا» وتذييل الصفحات.</small>
+            </label>
+
+            <label class="m-field">
+              <span>رابط الموقع على خرائط Google</span>
+              <input id="si-map-url" name="mapUrl" type="url" maxlength="500" dir="ltr"
+                     class="m-input--latin" placeholder="https://maps.google.com/...">
+              <small class="m-field__hint">يظهر في: زر «الموقع على الخريطة». يجب أن يبدأ بـ http:// أو https://.</small>
+            </label>
+
+            <label class="m-field">
+              <span>رقم واتساب</span>
+              <input id="si-whatsapp" name="whatsapp" type="text" maxlength="20" dir="ltr"
+                     class="m-input--latin" inputmode="numeric" placeholder="967770000000">
+              <small class="m-field__hint">أرقام فقط بلا + أو مسافات. يظهر في: زر واتساب العائم وصفحة «اتصل بنا».</small>
+            </label>
+
+            <label class="m-field">
+              <span>رقم الهاتف</span>
+              <input id="si-phone" name="phone" type="text" maxlength="40" dir="ltr"
+                     class="m-input--latin" placeholder="+967 77 000 0000">
+              <small class="m-field__hint">يظهر في: صفحة «اتصل بنا» وتذييل الصفحات.</small>
+            </label>
+
+            <label class="m-field">
+              <span>البريد الإلكتروني</span>
+              <input id="si-email" name="email" type="email" maxlength="120" dir="ltr"
+                     class="m-input--latin" placeholder="hello@stoor.example">
+              <small class="m-field__hint">يظهر في: صفحة «اتصل بنا» وتذييل الصفحات.</small>
+            </label>
+
+            <h4 class="m-subhead">روابط التواصل الاجتماعي — الترويسة والتذييل</h4>
+
+            <label class="m-field">
+              <span>إنستغرام</span>
+              <input id="si-instagram" name="instagram" type="url" maxlength="300" dir="ltr"
+                     class="m-input--latin" placeholder="https://instagram.com/...">
+              <small class="m-field__hint">يظهر في: أيقونات التواصل. يجب أن يبدأ بـ http:// أو https://.</small>
+            </label>
+
+            <label class="m-field">
+              <span>تيك توك</span>
+              <input id="si-tiktok" name="tiktok" type="url" maxlength="300" dir="ltr"
+                     class="m-input--latin" placeholder="https://tiktok.com/@...">
+              <small class="m-field__hint">يظهر في: أيقونات التواصل. يجب أن يبدأ بـ http:// أو https://.</small>
+            </label>
+
+            <label class="m-field">
+              <span>سناب شات</span>
+              <input id="si-snapchat" name="snapchat" type="url" maxlength="300" dir="ltr"
+                     class="m-input--latin" placeholder="https://snapchat.com/add/...">
+              <small class="m-field__hint">يظهر في: أيقونات التواصل. يجب أن يبدأ بـ http:// أو https://.</small>
+            </label>
+
+            <label class="m-field">
+              <span>إكس (تويتر سابقاً)</span>
+              <input id="si-x" name="x" type="url" maxlength="300" dir="ltr"
+                     class="m-input--latin" placeholder="https://x.com/...">
+              <small class="m-field__hint">يظهر في: أيقونات التواصل. يجب أن يبدأ بـ http:// أو https://.</small>
+            </label>
+
+            <p class="m-form-error" id="si-error" role="alert" hidden></p>
+            <p class="m-form-success" id="si-success" role="status" hidden></p>
+
+            <div class="m-form__actions">
+              <button type="submit" class="m-btn m-btn--copper" id="si-save">حفظ معلومات المتجر</button>
+              <button type="button" class="m-btn m-btn--ghost" id="si-reload">إعادة التحميل</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="m-card m-note-card">
+          <h3>أين تظهر هذه الحقول؟</h3>
+          <ul class="m-note-list">
+            <li><strong>كل الصفحات:</strong> الشعار، اسم المتجر، وساعات العمل والعنوان في التذييل.</li>
+            <li><strong>الصفحة الرئيسية:</strong> الشعار التعريفي، سطرا الترحيب وفقرته، ووصف المتجر.</li>
+            <li><strong>صفحة «من نحن»:</strong> اسم المتجر، الوصف ونص «من نحن».</li>
+            <li><strong>صفحة «اتصل بنا»:</strong> العنوان، الخريطة، واتساب، الهاتف، البريد وروابط التواصل.</li>
+          </ul>
+          <h3>قبل الحفظ</h3>
+          <ul class="m-note-list">
+            <li>اسم المتجر (عربي) مطلوب للحفظ.</li>
+            <li>روابط الخرائط والتواصل تُقبل فقط بـ http:// أو https://، وإلا تُرفض.</li>
+            <li>رقم واتساب يُحفظ كأرقام فقط، والبريد يُتحقق منه تحققاً بسيطاً.</li>
+            <li>الشعار يُرفع فور اختياره، لكن لا يُثبَّت في بيانات المتجر حتى تضغط «حفظ».</li>
+            <li>بعد الحفظ يُبلَّغ المتجر لتحديث صفحاته تلقائياً.</li>
+            <li>هذه الصفحة محلية — الرفع يتم بمفتاح الخدمة على الخادم فقط.</li>
+          </ul>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

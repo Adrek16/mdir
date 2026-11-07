@@ -1,0 +1,22 @@
+{
+  "name": "stoor-manager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "لوحة مدير متجر ستور — تعمل محلياً على Node.js + Supabase",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch --env-file=.env server/index.js",
+    "start": "node --env-file=.env server/index.js",
+    "check": "node --check server/index.js",
+    "test:acceptance": "node --env-file=.env scripts/acceptance-orders.mjs",
+    "test:catalog": "node --env-file=.env scripts/acceptance-catalog.mjs",
+    "test:slugs": "node --env-file=.env scripts/acceptance-slugs.mjs"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}

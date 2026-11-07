@@ -1,0 +1,427 @@
+/* ══════════════════════════════════════════════════════════
+   المنتجات: شبكة النموذج، اللون، مفتاح الظهور، وعناصر الجدول
+   ══════════════════════════════════════════════════════════ */
+
+.m-form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.m-color-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.m-color-field input[type="color"] {
+  width: 3rem;
+  height: 2.5rem;
+  padding: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: #fff;
+  cursor: pointer;
+}
+
+.m-color-field input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.82rem;
+}
+
+.m-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--cream);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.m-switch input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--copper);
+}
+
+#product-form .m-field textarea {
+  min-height: 5rem;
+}
+
+/* ── جدول المنتجات ─────────────────────────────────────── */
+
+.m-table--products td:first-child {
+  max-width: 18rem;
+}
+
+.m-table--products .m-cell-id {
+  display: block;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m-table--products td:nth-child(2),
+.m-table--products td:nth-child(3) {
+  color: var(--ink-soft);
+}
+
+.m-table--products td:nth-child(3) {
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.m-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-stock.is-low {
+  color: var(--warning);
+}
+
+.m-stock.is-out {
+  color: var(--danger);
+}
+
+.m-visibility {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.5;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.m-visibility.is-on {
+  background: var(--success-wash);
+  color: var(--success);
+  border-color: #c8e3d6;
+}
+
+.m-visibility.is-off {
+  background: var(--sand);
+  color: var(--ink-mute);
+  border-color: var(--line);
+}
+
+.m-visibility:hover {
+  border-color: var(--copper);
+  color: var(--copper-dark);
+}
+
+.m-row-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  .m-table--products td:first-child {
+    max-width: 11rem;
+  }
+
+  .m-table--products .m-cell-id {
+    max-width: 9rem;
+  }
+
+  .m-table--products th:nth-child(2),
+  .m-table--products td:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .m-table--products th:nth-child(5),
+  .m-table--products td:nth-child(5) {
+    display: none;
+  }
+}
+
+#product-delete {
+  margin-inline-start: auto;
+}
+
+/* ── الألوان ومخزون كل لون ─────────────────────────────── */
+
+.m-colors {
+  margin-top: 1.1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--cream);
+}
+
+.m-colors__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.m-colors__head h3 {
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.m-colors__head p {
+  margin-top: 0.2rem;
+  font-size: 0.76rem;
+  line-height: 1.7;
+  color: var(--ink-mute);
+}
+
+.m-colors__list {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.m-color-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: #fff;
+}
+
+.m-color-row__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr) minmax(0, 0.75fr) auto;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.m-color-row .m-field > span:first-child {
+  font-size: 0.72rem;
+}
+
+.m-color-row__remove {
+  margin-bottom: 0.18rem;
+}
+
+.m-colors__empty {
+  margin-top: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-control);
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  background: #fff;
+}
+
+.m-colors__total {
+  margin-top: 0.9rem;
+  max-width: 14rem;
+}
+
+#product-stock.is-readonly {
+  background: var(--sand);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+
+/* ── المخزون والألوان داخل الجدول ──────────────────────── */
+
+.m-stock-cell {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.m-swatches {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.m-swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+}
+
+.m-swatches__count {
+  margin-inline-start: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ink-mute);
+}
+
+@media (max-width: 620px) {
+  .m-color-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .m-color-row__main {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .m-color-row__remove {
+    justify-self: end;
+    margin: 0;
+  }
+
+  .m-colors__head {
+    flex-direction: column;
+  }
+}
+
+/* ── صور المنتج والألوان ───────────────────────────────── */
+
+.m-media {
+  margin: 1.1rem 0;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft, #fbf9f6);
+}
+
+.m-media__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.m-media__head--inline {
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.m-media__head h3 {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.m-media__head p {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--muted, #7a6f66);
+}
+
+.m-media__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted, #7a6f66);
+}
+
+.m-media__count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted, #7a6f66);
+}
+
+.m-media__count.is-full {
+  color: var(--danger, #b4442c);
+}
+
+.m-media__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.m-media__preview {
+  width: 104px;
+  height: 104px;
+  border-radius: var(--radius-control);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.m-media__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.m-media__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.m-media__pick {
+  cursor: pointer;
+}
+
+.m-media__pick.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.m-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.m-thumb {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.m-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.m-thumb__remove {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: 2px;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(20, 14, 10, 0.65);
+  color: #fff;
+  font-size: 0.58rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.m-thumb__remove:hover {
+  background: var(--danger, #b4442c);
+}

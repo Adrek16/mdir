@@ -1,0 +1,152 @@
+/* ══════════════════════════════════════════════════════════
+   الدفع والمحافظ
+   ══════════════════════════════════════════════════════════ */
+
+.m-card__head code {
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.35rem;
+  background: var(--sand);
+  font-size: 0.72rem;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.m-note-card {
+  display: grid;
+  gap: 0.7rem;
+  background: var(--sand);
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.m-note-card h3 {
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.m-note-list {
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.m-note-list li {
+  padding-inline-start: 1rem;
+  position: relative;
+}
+
+.m-note-list li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.55rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--copper);
+}
+
+.m-pay-stack {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.m-pay-list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.m-pay-item {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: #fff;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.m-pay-item.is-off {
+  opacity: 0.62;
+  border-style: dashed;
+}
+
+.m-pay-item__head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.m-pay-item__name {
+  flex: 1 1 12rem;
+  min-width: 8rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  background: #fff;
+}
+
+.m-pay-item__name:focus {
+  outline: 2px solid var(--copper);
+  outline-offset: 1px;
+}
+
+.m-pay-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.m-pay-item__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-start: auto;
+}
+
+.m-pay-item__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.m-pay-empty {
+  padding: 1.5rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.9rem;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
+.m-pay-empty p + p {
+  margin-top: 0.35rem;
+  color: var(--ink-mute);
+  font-size: 0.76rem;
+}
+
+#methods-error,
+#methods-success {
+  margin: 0 1rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .m-pay-item__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .m-pay-item__actions {
+    margin-inline-start: 0;
+  }
+}

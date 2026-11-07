@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "login" }) %>
+</head>
+<body class="m-login">
+  <main class="m-login__wrap">
+    <section class="m-login__brand">
+      <div class="m-login__brand-head">
+        <span class="m-brand__mark m-brand__mark--lg" aria-hidden="true">س</span>
+        <div>
+          <p class="m-eyebrow">متجر ستور</p>
+          <h1>لوحة المدير</h1>
+        </div>
+      </div>
+
+      <p class="m-login__lead">
+        مكان واحد لمتابعة الطلبات، مراجعة إيصالات التحويل، وإدارة بيانات المتجر.
+      </p>
+
+      <ul class="m-login__points">
+        <li>تعمل على هذا الجهاز فقط</li>
+        <li>جلسة موقّعة بمدة ثماني ساعات</li>
+        <li>لا تُخزَّن كلمة المرور في المتصفح</li>
+      </ul>
+
+      <p class="m-login__foot">ستور — عطور وإكسسوارات</p>
+    </section>
+
+    <section class="m-login__card">
+      <header>
+        <h2>تسجيل الدخول</h2>
+        <p>استخدم حساب المدير المسجّل في Supabase.</p>
+      </header>
+
+      <form class="m-form" id="login-form" novalidate>
+        <label class="m-field">
+          <span>البريد الإلكتروني</span>
+          <input id="login-email" name="email" type="email" autocomplete="username"
+                 inputmode="email" dir="ltr" placeholder="admin@stoor.local" required>
+        </label>
+
+        <label class="m-field">
+          <span>كلمة المرور</span>
+          <input id="login-password" name="password" type="password"
+                 autocomplete="current-password" placeholder="••••••••" required>
+        </label>
+
+        <input type="hidden" id="login-next" value="<%= next %>">
+
+        <p class="m-form-error" id="login-error" role="alert" hidden></p>
+
+        <button type="submit" class="m-btn m-btn--copper m-btn--block" id="login-submit">
+          دخول إلى اللوحة
+        </button>
+      </form>
+
+      <p class="m-login__note">
+        الحساب يُتحقق منه على الخادم، ويُقرأ دوره من جدول <code>profiles</code>.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="<%= assetBase %>/js/pages/login.js"></script>
+</body>
+</html>

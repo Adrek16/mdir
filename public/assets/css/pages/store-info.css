@@ -1,0 +1,72 @@
+/* ══════════════════════════════════════════════════════════
+   معلومات المتجر
+   ══════════════════════════════════════════════════════════ */
+
+/* عناوين الأقسام داخل النموذج — تُقسّم الحقول الطويلة بصرياً. */
+.m-subhead {
+  margin: 0.35rem 0 0;
+  padding-block-start: 0.9rem;
+  border-block-start: 1px solid var(--line-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--copper-dark);
+}
+
+.m-form .m-subhead:first-of-type {
+  margin-block-start: 0;
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+
+/* ── الشعار ────────────────────────────────────────────── */
+.m-logo-field {
+  gap: 0.55rem;
+}
+
+.m-logo-preview {
+  display: grid;
+  place-items: center;
+  min-height: 8.5rem;
+  padding: 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-card);
+  background:
+    repeating-conic-gradient(var(--sand) 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+}
+
+.m-logo-preview__img {
+  max-width: 100%;
+  max-height: 7rem;
+  object-fit: contain;
+  border-radius: var(--radius-control);
+}
+
+.m-logo-preview__empty {
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+
+.m-logo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* التسمية تعمل كزر — لا بد من مؤشر واضح. */
+.m-logo-pick {
+  cursor: pointer;
+}
+
+.m-logo-status {
+  display: block;
+  font-weight: 600;
+}
+
+.m-logo-status.is-error {
+  color: var(--danger);
+}
+
+.m-logo-status.is-ok {
+  color: var(--success);
+}

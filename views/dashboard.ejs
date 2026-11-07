@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "dashboard" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "ملخص المتجر اليوم" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow" id="dash-date">—</p>
+          <h2>أهلاً بك في لوحة ستور</h2>
+          <p>كل طلب ودفع وإيصال في مكان واحد.</p>
+        </div>
+        <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="dash-refresh">
+          <%- include("partials/icon", { name: "refresh" }) %>
+          <span>تحديث</span>
+        </button>
+      </section>
+
+      <section class="m-stats" aria-label="مؤشرات سريعة">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "orders" }) %></div>
+          <p class="m-stat__label">إجمالي الطلبات</p>
+          <p class="m-stat__value" id="stat-total">—</p>
+          <p class="m-stat__hint"><span id="stat-today">—</span> اليوم</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-copper"><%- include("partials/icon", { name: "box" }) %></div>
+          <p class="m-stat__label">بانتظار التأكيد</p>
+          <p class="m-stat__value" id="stat-new">—</p>
+          <p class="m-stat__hint"><a href="/orders?status=new">افتح الطلبات الجديدة</a></p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "receipt" }) %></div>
+          <p class="m-stat__label">إيصالات للمراجعة</p>
+          <p class="m-stat__value" id="stat-review">—</p>
+          <p class="m-stat__hint"><a href="/orders?paymentStatus=pending">راجع التحويلات والمحافظ</a></p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "money" }) %></div>
+          <p class="m-stat__label">قيمة الطلبات المؤكدة</p>
+          <p class="m-stat__value" id="stat-value">—</p>
+          <p class="m-stat__hint">مؤكّد + مكتمل</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "star" }) %></div>
+          <p class="m-stat__label">تقييمات للمراجعة</p>
+          <p class="m-stat__value" id="stat-reviews">—</p>
+          <p class="m-stat__hint"><a href="/reviews?status=pending">اعتمد أو ارفض التقييمات</a></p>
+        </article>
+      </section>
+
+      <div class="m-grid-2">
+        <section class="m-card m-card--table">
+          <header class="m-card__head">
+            <div>
+              <h3>آخر الطلبات</h3>
+              <p>أحدث ستة طلبات وصلت للمتجر</p>
+            </div>
+            <a class="m-link" href="/orders">كل الطلبات</a>
+          </header>
+
+          <div class="m-table-wrap">
+            <table class="m-table">
+              <thead>
+                <tr>
+                  <th scope="col">الطلب</th>
+                  <th scope="col">العميل</th>
+                  <th scope="col">الإجمالي</th>
+                  <th scope="col">الحالة</th>
+                  <th scope="col">الوقت</th>
+                </tr>
+              </thead>
+              <tbody id="recent-body">
+                <tr><td colspan="5" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="m-card">
+          <header class="m-card__head">
+            <div>
+              <h3>إيصالات بانتظار المراجعة</h3>
+              <p>تحويلات ومحافظ تحتاج اعتماداً أو رفضاً</p>
+            </div>
+          </header>
+
+          <ul class="m-proof-list" id="proofs-list">
+            <li class="m-proof-list__empty">جارٍ التحميل…</li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

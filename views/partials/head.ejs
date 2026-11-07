@@ -1,0 +1,14 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title><%= title %> — لوحة مدير ستور</title>
+
+<link rel="preload" href="/fonts/cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/cairo-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="<%= assetBase %>/css/theme.css">
+<link rel="stylesheet" href="<%= assetBase %>/css/layout.css">
+<link rel="stylesheet" href="<%= assetBase %>/css/components.css">
+<% if (typeof pageCss !== "undefined" && pageCss) { %>
+<link rel="stylesheet" href="<%= assetBase %>/css/pages/<%= pageCss %>.css">
+<% } %>

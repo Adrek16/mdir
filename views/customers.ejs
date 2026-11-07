@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "customers" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "ملفات العملاء وطلباتهم وإنفاقهم" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">العملاء</p>
+          <h2>العملاء المسجّلون</h2>
+          <p>كل حساب له ملف واحد يجمع طلباته وإنفاقه — الأرقام من الطلبات المؤكدة والمكتملة فقط.</p>
+        </div>
+      </section>
+
+      <section class="m-stats" aria-label="مؤشرات العملاء">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "users" }) %></div>
+          <p class="m-stat__label">إجمالي العملاء</p>
+          <p class="m-stat__value" id="cust-stat-total">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-copper"><%- include("partials/icon", { name: "plus" }) %></div>
+          <p class="m-stat__label">عملاء هذا الشهر</p>
+          <p class="m-stat__value" id="cust-stat-month">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "check" }) %></div>
+          <p class="m-stat__label">مشترون</p>
+          <p class="m-stat__value" id="cust-stat-buyers">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "star" }) %></div>
+          <p class="m-stat__label">نسبة التكرار</p>
+          <p class="m-stat__value" id="cust-stat-repeat">—</p>
+        </article>
+      </section>
+
+      <section class="m-card m-filters">
+        <div class="m-toolbar">
+          <label class="m-field m-search">
+            <span class="m-sr-only">بحث</span>
+            <%- include("partials/icon", { name: "search" }) %>
+            <input id="cust-search" type="search" autocomplete="off"
+                   placeholder="الاسم، البريد، الجوال…">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>الطلبات</span>
+            <select id="cust-filter-orders">
+              <option value="">الكل</option>
+              <option value="yes">لديه طلبات</option>
+              <option value="no">بلا طلبات</option>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>التكرار</span>
+            <select id="cust-filter-repeat">
+              <option value="">الكل</option>
+              <option value="yes">متكرر (طلبين فأكثر)</option>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>انضم من</span>
+            <input id="cust-filter-from" type="date">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>إلى</span>
+            <input id="cust-filter-to" type="date">
+          </label>
+
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="cust-refresh">
+            <%- include("partials/icon", { name: "refresh" }) %>
+            <span>تحديث</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="m-card m-card--table">
+        <header class="m-card__head">
+          <div>
+            <h3>قائمة العملاء</h3>
+            <p id="cust-count">جارٍ التحميل…</p>
+          </div>
+        </header>
+
+        <div class="m-table-wrap">
+          <table class="m-table m-table--customers">
+            <thead>
+              <tr>
+                <th scope="col">العميل</th>
+                <th scope="col">الجوال</th>
+                <th scope="col">الطلبات</th>
+                <th scope="col">الإنفاق</th>
+                <th scope="col">آخر طلب</th>
+                <th scope="col">انضم</th>
+                <th scope="col" class="m-table__actions">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="customers-body">
+              <tr><td colspan="7" class="m-table__empty">جارٍ التحميل…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="m-table-foot">
+          <span class="m-table-foot__hint">اضغط على العميل لعرض ملفه وطلباته وملاحظاتك الداخلية.</span>
+          <nav class="m-pagination" id="customers-pagination" aria-label="صفحات العملاء"></nav>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

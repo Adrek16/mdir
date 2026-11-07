@@ -1,0 +1,32 @@
+<header class="m-topbar">
+  <button type="button" class="m-icon-btn m-topbar__menu" data-sidebar-toggle aria-label="فتح القائمة" aria-controls="m-sidebar">
+    <%- include("icon", { name: "menu" }) %>
+  </button>
+
+  <div class="m-topbar__titles">
+    <h1><%= title %></h1>
+    <% if (typeof subtitle !== "undefined" && subtitle) { %>
+      <p><%= subtitle %></p>
+    <% } %>
+  </div>
+
+  <div class="m-topbar__actions">
+    <a class="m-btn m-btn--ghost m-btn--sm m-topbar__store" href="<%= storeUrl %>" target="_blank" rel="noreferrer noopener">
+      <%- include("icon", { name: "store" }) %>
+      <span>المتجر</span>
+      <%- include("icon", { name: "external", className: "m-icon--xs" }) %>
+    </a>
+
+    <% if (admin) { %>
+      <span class="m-user" title="<%= admin.email %>">
+        <span class="m-user__dot" aria-hidden="true"></span>
+        <span class="m-user__email"><%= admin.email %></span>
+      </span>
+    <% } %>
+
+    <button type="button" class="m-btn m-btn--ghost m-btn--sm" data-logout>
+      <%- include("icon", { name: "logout" }) %>
+      <span>خروج</span>
+    </button>
+  </div>
+</header>

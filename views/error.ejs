@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "login" }) %>
+</head>
+<body class="m-login m-login--error">
+  <main class="m-error">
+    <span class="m-brand__mark m-brand__mark--lg" aria-hidden="true">س</span>
+    <p class="m-error__status"><%= status %></p>
+    <h1><%= title %></h1>
+    <p><%= message %></p>
+    <div class="m-error__actions">
+      <a class="m-btn m-btn--copper" href="/dashboard">إلى لوحة المدير</a>
+      <a class="m-btn m-btn--ghost" href="/orders">الطلبات</a>
+    </div>
+  </main>
+</body>
+</html>

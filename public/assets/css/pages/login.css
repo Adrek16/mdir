@@ -1,0 +1,198 @@
+/* ══════════════════════════════════════════════════════════
+   صفحة الدخول
+   ══════════════════════════════════════════════════════════ */
+
+.m-login {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(200 127 98 / 0.16), transparent 42%),
+    radial-gradient(circle at 88% 92%, rgb(73 0 0 / 0.08), transparent 45%),
+    var(--cream);
+}
+
+.m-login__wrap {
+  display: grid;
+  width: min(100%, 1000px);
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+  border-radius: 1.6rem;
+  background: #fff;
+  box-shadow: var(--shadow-lift);
+}
+
+.m-login__brand {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 1.25rem;
+  padding: 2.25rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 10%, rgb(200 127 98 / 0.35), transparent 45%),
+    radial-gradient(circle at 10% 95%, rgb(73 0 0 / 0.55), transparent 50%),
+    var(--ink);
+  color: #e9ded7;
+}
+
+.m-login__brand-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.m-login__brand h1 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.m-login__brand .m-eyebrow {
+  color: var(--copper-light);
+}
+
+.m-login__lead {
+  max-width: 34ch;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #d6c9c1;
+}
+
+.m-login__points {
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  color: #c9bab1;
+}
+
+.m-login__points li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.m-login__points li::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--copper);
+  flex: 0 0 auto;
+}
+
+.m-login__foot {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #9c8d84;
+}
+
+.m-login__card {
+  display: grid;
+  align-content: center;
+  gap: 1.4rem;
+  padding: 2.25rem;
+}
+
+.m-login__card h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.m-login__card header p {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.m-login__note {
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+.m-login__note code {
+  direction: ltr;
+  font-size: 0.72rem;
+}
+
+@media (min-width: 900px) {
+  .m-login__wrap {
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+}
+
+@media (max-width: 899px) {
+  .m-login__brand {
+    padding: 1.75rem;
+  }
+
+  .m-login__points,
+  .m-login__foot {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .m-login {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .m-login__wrap {
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .m-login__brand,
+  .m-login__card {
+    padding: 1.5rem;
+  }
+}
+
+/* ── صفحة الخطأ ────────────────────────────────────────── */
+.m-login--error {
+  place-items: center;
+}
+
+.m-error {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  width: min(100%, 520px);
+  padding: 2.5rem 1.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: var(--shadow-lift);
+  text-align: center;
+}
+
+.m-error__status {
+  margin-top: 0.4rem;
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.m-error h1 {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.m-error p {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.m-error__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}

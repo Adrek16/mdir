@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "customers" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "ملف العميل وطلباته" }) %>
+
+    <main class="m-main" id="content" data-customer-id="<%= customer.id %>">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">ملف العميل</p>
+          <h2 id="customer-name"><%= customer.name || "بدون اسم" %></h2>
+          <p id="customer-email" dir="ltr"><%= customer.email || "—" %></p>
+        </div>
+
+        <div class="m-contact-actions">
+          <a class="m-btn m-btn--ghost m-btn--sm" id="customer-whatsapp"
+             href="#" target="_blank" rel="noreferrer noopener" hidden>
+            <%- include("partials/icon", { name: "whatsapp" }) %>
+            <span>واتساب</span>
+          </a>
+          <a class="m-btn m-btn--ghost m-btn--sm" id="customer-call" href="#" hidden>
+            <%- include("partials/icon", { name: "phone" }) %>
+            <span>هاتف</span>
+          </a>
+          <a class="m-btn m-btn--ghost m-btn--sm" href="/customers">
+            <%- include("partials/icon", { name: "chevron" }) %>
+            <span>كل العملاء</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="m-stats" aria-label="إحصاءات العميل">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "orders" }) %></div>
+          <p class="m-stat__label">الطلبات</p>
+          <p class="m-stat__value" id="customer-stat-orders">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-copper"><%- include("partials/icon", { name: "money" }) %></div>
+          <p class="m-stat__label">إجمالي الإنفاق</p>
+          <p class="m-stat__value" id="customer-stat-spend">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "reports" }) %></div>
+          <p class="m-stat__label">متوسط قيمة الطلب</p>
+          <p class="m-stat__value" id="customer-stat-average">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "box" }) %></div>
+          <p class="m-stat__label">القطع المشتراة</p>
+          <p class="m-stat__value" id="customer-stat-units">—</p>
+        </article>
+      </section>
+
+      <div class="m-grid-2 m-grid-2--aside">
+        <section class="m-card m-card--table">
+          <header class="m-card__head">
+            <div>
+              <h3>طلبات العميل</h3>
+              <p id="customer-orders-count">جارٍ التحميل…</p>
+            </div>
+          </header>
+
+          <div class="m-table-wrap">
+            <table class="m-table m-customer-orders">
+              <thead>
+                <tr>
+                  <th scope="col">الطلب</th>
+                  <th scope="col">التاريخ</th>
+                  <th scope="col">القطع</th>
+                  <th scope="col">الإجمالي</th>
+                  <th scope="col">الدفع</th>
+                  <th scope="col">الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="customer-orders">
+                <tr><td colspan="6" class="m-table__empty">جارٍ التحميل…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="m-customer-side">
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>بيانات الحساب</h3>
+                <p>تُدار من المتجر — لا يمكن تعديل كلمة المرور من هنا.</p>
+              </div>
+            </header>
+
+            <dl class="m-data">
+              <div><dt>الجوال</dt><dd id="customer-phone" dir="ltr">—</dd></div>
+              <div><dt>مزوّد الدخول</dt><dd id="customer-provider">—</dd></div>
+              <div><dt>تاريخ الانضمام</dt><dd id="customer-joined">—</dd></div>
+              <div><dt>أول طلب</dt><dd id="customer-first-order">—</dd></div>
+              <div><dt>آخر طلب</dt><dd id="customer-last-order">—</dd></div>
+            </dl>
+          </section>
+
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>ملاحظة داخلية</h3>
+                <p>لا تظهر للعميل — للمدير فقط.</p>
+              </div>
+            </header>
+
+            <form id="customer-note-form" novalidate>
+              <label class="m-field">
+                <span class="m-sr-only">ملاحظة داخلية</span>
+                <textarea id="customer-note" maxlength="500" rows="4"
+                          placeholder="مثال: يفضّل التواصل مساءً."></textarea>
+              </label>
+
+              <p class="m-form-error" id="customer-note-error" role="alert" hidden></p>
+              <p class="m-form-success" id="customer-note-success" role="status" hidden></p>
+
+              <button type="submit" class="m-btn m-btn--copper" id="customer-note-save">
+                حفظ الملاحظة
+              </button>
+            </form>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

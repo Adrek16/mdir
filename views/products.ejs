@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "products" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "الكتالوج والأسعار والمخزون" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">الكتالوج</p>
+          <h2>إدارة المنتجات</h2>
+          <p>أضف منتجاً أو عدّل السعر والمخزون — يظهر التغيير في المتجر فور الحفظ.</p>
+        </div>
+        <button type="button" class="m-btn m-btn--copper" id="product-new">
+          <%- include("partials/icon", { name: "products" }) %>
+          <span>منتج جديد</span>
+        </button>
+      </section>
+
+      <section class="m-stats" aria-label="مؤشرات المنتجات">
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "products" }) %></div>
+          <p class="m-stat__label">إجمالي المنتجات</p>
+          <p class="m-stat__value" id="prod-stat-total">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-success"><%- include("partials/icon", { name: "check" }) %></div>
+          <p class="m-stat__label">ظاهرة في المتجر</p>
+          <p class="m-stat__value" id="prod-stat-active">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon"><%- include("partials/icon", { name: "eye" }) %></div>
+          <p class="m-stat__label">مخفية</p>
+          <p class="m-stat__value" id="prod-stat-hidden">—</p>
+        </article>
+
+        <article class="m-card m-stat">
+          <div class="m-stat__icon is-warning"><%- include("partials/icon", { name: "box" }) %></div>
+          <p class="m-stat__label">نفدت كميتها</p>
+          <p class="m-stat__value" id="prod-stat-out">—</p>
+        </article>
+      </section>
+
+      <section class="m-card m-filters">
+        <div class="m-toolbar">
+          <label class="m-field m-search">
+            <span class="m-sr-only">بحث</span>
+            <%- include("partials/icon", { name: "search" }) %>
+            <input id="prod-search" type="search" autocomplete="off"
+                   placeholder="اسم المنتج، الرابط، الوصف المختصر…">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>التصنيف</span>
+            <select id="prod-filter-category">
+              <option value="">الكل</option>
+              <% categories.forEach((category) => { %>
+                <option value="<%= category.slug %>"><%= category.name %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>الظهور</span>
+            <select id="prod-filter-visibility">
+              <option value="">الكل</option>
+              <option value="active">ظاهر</option>
+              <option value="hidden">مخفي</option>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>المخزون</span>
+            <select id="prod-filter-stock">
+              <option value="">الكل</option>
+              <option value="low">منخفض (1–5)</option>
+              <option value="out">نفد</option>
+            </select>
+          </label>
+
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="prod-refresh">
+            <%- include("partials/icon", { name: "refresh" }) %>
+            <span>تحديث</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="m-card m-card--table">
+        <header class="m-card__head">
+          <div>
+            <h3>المنتجات</h3>
+            <p id="prod-count">جارٍ التحميل…</p>
+          </div>
+        </header>
+
+        <div class="m-table-wrap">
+          <table class="m-table m-table--products">
+            <thead>
+              <tr>
+                <th scope="col">المنتج</th>
+                <th scope="col">التصنيف</th>
+                <th scope="col">السعر</th>
+                <th scope="col">المخزون</th>
+                <th scope="col">الظهور</th>
+                <th scope="col" class="m-table__actions">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="products-body">
+              <tr><td colspan="6" class="m-table__empty">جارٍ التحميل…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="m-table-foot">
+          <span class="m-table-foot__hint">اضغط «تعديل» لفتح المنتج، أو «إظهار/إخفاء» لتبديل ظهوره.</span>
+          <nav class="m-pagination" id="products-pagination" aria-label="صفحات المنتجات"></nav>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- نافذة إضافة/تعديل منتج -->
+  <dialog class="m-modal m-modal--lg" id="product-dialog" aria-labelledby="product-dialog-title">
+    <header class="m-modal__head">
+      <div>
+        <p class="m-eyebrow" id="product-dialog-mode">منتج جديد</p>
+        <h2 id="product-dialog-title">إضافة منتج</h2>
+      </div>
+      <button type="button" class="m-icon-btn" data-close-dialog aria-label="إغلاق">
+        <%- include("partials/icon", { name: "close" }) %>
+      </button>
+    </header>
+
+    <div class="m-modal__body">
+      <form class="m-form" id="product-form" novalidate>
+        <input type="hidden" id="product-id">
+
+        <label class="m-field">
+          <span>اسم المنتج</span>
+          <input id="product-name" name="name" type="text" maxlength="120" required
+                 placeholder="مثال: عنبر ليلي">
+        </label>
+
+        <label class="m-field">
+          <span>الوصف المختصر</span>
+          <input id="product-subtitle" name="subtitle" type="text" maxlength="120"
+                 placeholder="أو دو بارفان · 100 مل">
+        </label>
+
+        <div class="m-form-grid">
+          <label class="m-field">
+            <span>التصنيف</span>
+            <select id="product-category" name="category">
+              <% categories.forEach((category) => { %>
+                <option value="<%= category.slug %>"><%= category.name %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>الجنس</span>
+            <select id="product-gender" name="gender">
+              <% genderOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>الشارة</span>
+            <select id="product-badge" name="badge">
+              <option value="">بلا شارة</option>
+              <% badgeOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>نوع الرسم</span>
+            <select id="product-artwork" name="artwork">
+              <% artworkOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+        </div>
+
+        <!-- صورة المنتج الرئيسية — تُرفع إلى bucket product-images -->
+        <section class="m-media" aria-labelledby="product-image-title">
+          <div class="m-media__head">
+            <div>
+              <h3 id="product-image-title">صورة المنتج الرئيسية</h3>
+              <p>تظهر في بطاقة المنتج وصفحة المنتج. إن لم تُرفع صورة يظهر الرسم التوليدي بدلاً منها.</p>
+            </div>
+          </div>
+
+          <div class="m-media__row">
+            <div class="m-media__preview" id="product-image-preview" hidden>
+              <img id="product-image-thumb" alt="معاينة صورة المنتج">
+            </div>
+
+            <div class="m-media__side">
+              <label class="m-btn m-btn--ghost m-btn--sm m-media__pick">
+                <input id="product-image-input" type="file" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+                <span>اختيار صورة</span>
+              </label>
+              <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="product-image-clear" hidden>
+                إزالة الصورة
+              </button>
+              <small class="m-field__hint">PNG أو JPG أو WebP أو AVIF — بحد أقصى 5 ميجابايت.</small>
+              <small class="m-field__hint" id="product-image-state" hidden></small>
+            </div>
+          </div>
+        </section>
+
+        <div class="m-form-grid">
+          <label class="m-field">
+            <span>السعر (ر.ي)</span>
+            <input id="product-price" name="price" type="number" min="0" step="0.01" required
+                   inputmode="decimal" placeholder="285">
+          </label>
+
+          <label class="m-field">
+            <span>السعر قبل الخصم (اختياري)</span>
+            <input id="product-compare" name="compareAt" type="number" min="0" step="0.01"
+                   inputmode="decimal" placeholder="430">
+          </label>
+
+          <label class="m-field">
+            <span>اللون الأساسي</span>
+            <span class="m-color-field">
+              <input id="product-tone" name="tone" type="color" value="#6d4a33">
+              <input id="product-tone-text" type="text" maxlength="7" dir="ltr"
+                     class="m-input--latin" placeholder="#6d4a33" aria-label="رمز اللون">
+            </span>
+          </label>
+        </div>
+
+        <section class="m-colors" aria-labelledby="product-colors-title">
+          <div class="m-colors__head">
+            <div>
+              <h3 id="product-colors-title">الألوان ومخزون كل لون</h3>
+              <p>أضف لوناً لكل خيار — يُحسب المخزون الكلي تلقائياً من مجموع الألوان.</p>
+            </div>
+            <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="product-color-add">
+              <%- include("partials/icon", { name: "plus" }) %>
+              <span>إضافة لون</span>
+            </button>
+          </div>
+
+          <div class="m-colors__list" id="product-colors"></div>
+
+          <p class="m-colors__empty" id="product-colors-empty" hidden>
+            لا ألوان لهذا المنتج — المخزون الكلي يُدخل يدوياً.
+          </p>
+
+          <div class="m-colors__total">
+            <label class="m-field m-field--compact">
+              <span>المخزون الكلي</span>
+              <input id="product-stock" name="stock" type="number" min="0" step="1" required
+                     inputmode="numeric" placeholder="18">
+              <small class="m-field__hint" id="product-stock-hint">مجموع مخزون الألوان.</small>
+            </label>
+          </div>
+        </section>
+
+        <label class="m-field">
+          <span>المزايا (سطر أو فاصلة لكل ميزة)</span>
+          <textarea id="product-features" name="features" rows="3" maxlength="1200"
+                    placeholder="ثبات من 8 إلى 10 ساعات&#10;تركيز 18%"></textarea>
+        </label>
+
+        <label class="m-field">
+          <span>الوصف الكامل</span>
+          <textarea id="product-description" name="description" rows="4" maxlength="2000"
+                    placeholder="وصف يظهر في صفحة المنتج…"></textarea>
+        </label>
+
+        <label class="m-switch">
+          <input id="product-active" name="active" type="checkbox" checked>
+          <span>ظاهر في المتجر</span>
+        </label>
+
+        <p class="m-form-error" id="product-error" role="alert" hidden></p>
+
+        <div class="m-form__actions">
+          <button type="submit" class="m-btn m-btn--copper" id="product-save">حفظ المنتج</button>
+          <button type="button" class="m-btn m-btn--ghost" data-close-dialog>إلغاء</button>
+          <button type="button" class="m-btn m-btn--danger" id="product-delete" hidden>حذف المنتج</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

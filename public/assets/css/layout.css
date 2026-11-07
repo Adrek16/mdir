@@ -1,0 +1,327 @@
+/* ══════════════════════════════════════════════════════════
+   القشرة: السايدبار + الشريط العلوي + مساحة المحتوى
+   ══════════════════════════════════════════════════════════ */
+
+.m-app {
+  min-height: 100vh;
+}
+
+/* ── السايدبار ─────────────────────────────────────────── */
+.m-sidebar {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-w);
+  padding: 1.25rem 1rem;
+  background: var(--ink);
+  color: #e9ded7;
+  transform: translateX(100%);
+  transition: transform 0.22s ease;
+}
+
+.m-sidebar-open .m-sidebar {
+  transform: none;
+}
+
+.m-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.25rem 0.35rem 1.25rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.m-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.85rem;
+  background: var(--copper);
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.m-brand__mark--lg {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 1rem;
+  font-size: 1.7rem;
+}
+
+.m-brand__text {
+  display: grid;
+  line-height: 1.3;
+}
+
+.m-brand__text strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.m-brand__text small {
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+}
+
+.m-sidebar__close {
+  margin-inline-start: auto;
+  color: #c8b8ae;
+}
+.m-sidebar__close:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: #fff;
+}
+
+.m-nav {
+  margin-top: 1.1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.m-nav ul {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.m-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.62rem 0.75rem;
+  border-radius: var(--radius-control);
+  color: #cbbdb4;
+  font-size: 0.87rem;
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.m-nav__link:hover {
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+
+.m-nav__link.is-active {
+  background: var(--copper);
+  color: #fff;
+  box-shadow: 0 10px 20px -14px rgb(200 127 98 / 0.9);
+}
+
+.m-nav__soon {
+  margin-inline-start: auto;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.1);
+  color: #d7c8bf;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.m-nav__count {
+  margin-inline-start: auto;
+  min-width: 1.35rem;
+  padding: 0.05rem 0.38rem;
+  border-radius: var(--radius-pill);
+  background: var(--copper);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.m-nav__link.is-active .m-nav__count {
+  background: rgb(255 255 255 / 0.24);
+  color: #fff;
+}
+
+.m-nav__link.is-active .m-nav__soon {
+  background: rgb(255 255 255 / 0.22);
+  color: #fff;
+}
+
+.m-sidebar__foot {
+  padding: 1rem 0.4rem 0.15rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  font-size: 0.72rem;
+  color: #b3a49a;
+}
+
+.m-sidebar__foot-note {
+  margin-top: 0.15rem;
+  color: #8c7d74;
+}
+
+/* ── منطقة المحتوى ─────────────────────────────────────── */
+.m-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.m-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: var(--topbar-h);
+  padding: 0.75rem 1.25rem;
+  background: rgb(251 248 245 / 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.m-topbar__menu {
+  display: inline-flex;
+}
+
+.m-topbar__titles {
+  min-width: 0;
+}
+
+.m-topbar__titles h1 {
+  font-size: 1.12rem;
+  font-weight: 800;
+}
+
+.m-topbar__titles p {
+  font-size: 0.75rem;
+  color: var(--ink-mute);
+}
+
+.m-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.m-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 15rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--sand);
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+}
+
+.m-user__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--success);
+  flex: 0 0 auto;
+}
+
+.m-user__email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.m-main {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.m-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.m-page-head h2 {
+  margin-top: 0.15rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.m-page-head p {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* ── طبقة التعتيم على الجوال ───────────────────────────── */
+.m-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: rgb(35 29 27 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* ── الشاشات الكبيرة ───────────────────────────────────── */
+@media (min-width: 1024px) {
+  .m-sidebar {
+    transform: none;
+  }
+
+  .m-sidebar__close,
+  .m-topbar__menu {
+    display: none;
+  }
+
+  .m-shell {
+    margin-inline-start: var(--sidebar-w);
+  }
+
+  .m-topbar {
+    padding-inline: 2rem;
+  }
+
+  .m-main {
+    padding: 2rem 2rem 3.5rem;
+    gap: 1.5rem;
+  }
+
+  .m-overlay {
+    display: none !important;
+  }
+}
+
+/* ── الشاشات الصغيرة ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .m-topbar {
+    padding-inline: 0.85rem;
+  }
+
+  .m-topbar__titles p {
+    display: none;
+  }
+
+  .m-topbar__store span {
+    display: none;
+  }
+
+  .m-user {
+    display: none;
+  }
+
+  .m-main {
+    padding: 1.1rem 0.85rem 2.5rem;
+  }
+
+  .m-page-head h2 {
+    font-size: 1.25rem;
+  }
+}

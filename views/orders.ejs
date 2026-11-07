@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "orders" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "متابعة الطلبات والمدفوعات" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-card m-filters">
+        <div class="m-toolbar">
+          <label class="m-field m-search">
+            <span class="m-sr-only">بحث</span>
+            <%- include("partials/icon", { name: "search" }) %>
+            <input id="orders-search" type="search" autocomplete="off"
+                   placeholder="رقم الطلب، الاسم، الجوال…">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>حالة الطلب</span>
+            <select id="filter-status">
+              <option value="">الكل</option>
+              <% statusOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>طريقة الدفع</span>
+            <select id="filter-payment">
+              <option value="">الكل</option>
+              <% paymentOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>حالة الدفع</span>
+            <select id="filter-payment-status">
+              <option value="">الكل</option>
+              <% paymentStatusOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>حالة المخزون</span>
+            <select id="filter-stock">
+              <option value="">الكل</option>
+              <% stockStateOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>من تاريخ</span>
+            <input id="filter-from" type="date">
+          </label>
+
+          <label class="m-field m-field--compact">
+            <span>إلى تاريخ</span>
+            <input id="filter-to" type="date">
+          </label>
+
+          <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="orders-refresh">
+            <%- include("partials/icon", { name: "refresh" }) %>
+            <span>تحديث</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="m-card m-card--table">
+        <header class="m-card__head">
+          <div>
+            <h3>الطلبات</h3>
+            <p id="orders-count">جارٍ التحميل…</p>
+          </div>
+        </header>
+
+        <div class="m-table-wrap">
+          <table class="m-table m-table--orders">
+            <thead>
+              <tr>
+                <th scope="col">الطلب</th>
+                <th scope="col">العميل</th>
+                <th scope="col">القطع</th>
+                <th scope="col">الإجمالي</th>
+                <th scope="col">الدفع</th>
+                <th scope="col">المخزون</th>
+                <th scope="col">الحالة</th>
+                <th scope="col" class="m-table__actions">إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="orders-body">
+              <tr><td colspan="8" class="m-table__empty">جارٍ التحميل…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="m-table-foot">
+          <span class="m-table-foot__hint">اضغط على أي طلب لعرض التفاصيل ومراجعة الإيصال.</span>
+          <nav class="m-pagination" id="orders-pagination" aria-label="صفحات الطلبات"></nav>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- تفاصيل الطلب -->
+  <dialog class="m-modal m-modal--lg" id="order-dialog" aria-labelledby="order-customer">
+    <header class="m-modal__head">
+      <div>
+        <p class="m-eyebrow" id="order-id">—</p>
+        <h2 id="order-customer">تفاصيل الطلب</h2>
+      </div>
+      <button type="button" class="m-icon-btn" data-close-dialog aria-label="إغلاق">
+        <%- include("partials/icon", { name: "close" }) %>
+      </button>
+    </header>
+
+    <div class="m-modal__body">
+      <div class="m-badges" id="order-badges"></div>
+
+      <div class="m-detail-grid">
+        <section class="m-detail-block">
+          <h3>بيانات العميل</h3>
+          <dl class="m-data">
+            <div><dt>الجوال</dt><dd id="order-phone">—</dd></div>
+            <div><dt>البريد</dt><dd id="order-email">—</dd></div>
+            <div><dt>ملاحظات</dt><dd id="order-notes">—</dd></div>
+          </dl>
+          <div class="m-contact-actions">
+            <a class="m-btn m-btn--ghost m-btn--xs" id="order-call" href="#" hidden>
+              <%- include("partials/icon", { name: "phone" }) %><span>اتصال</span>
+            </a>
+            <a class="m-btn m-btn--ghost m-btn--xs" id="order-whatsapp" href="#" target="_blank" rel="noreferrer noopener" hidden>
+              <%- include("partials/icon", { name: "whatsapp" }) %><span>واتساب</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="m-detail-block">
+          <h3>الدفع والإيصال</h3>
+          <dl class="m-data">
+            <div><dt>الطريقة</dt><dd id="order-payment">—</dd></div>
+            <div><dt>حالة الدفع</dt><dd id="order-payment-status">—</dd></div>
+            <div><dt>حالة المخزون</dt><dd id="order-stock-state">—</dd></div>
+            <div><dt>رفع الإيصال</dt><dd id="order-proof-time">—</dd></div>
+            <div><dt>ملاحظة المراجعة</dt><dd id="order-review-note">—</dd></div>
+          </dl>
+          <div class="m-proof-box" id="order-proof" hidden>
+            <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="order-proof-open">
+              <%- include("partials/icon", { name: "eye" }) %>
+              <span>عرض الإيصال</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <section class="m-detail-block">
+        <h3>المنتجات</h3>
+        <ul class="m-items" id="order-items"></ul>
+        <dl class="m-totals" id="order-totals"></dl>
+      </section>
+
+      <section class="m-detail-block m-review">
+        <h3>تحديث الطلب</h3>
+        <div class="m-form-row">
+          <label class="m-field m-field--compact">
+            <span>حالة الطلب</span>
+            <select id="order-status">
+              <% statusOptions.forEach((option) => { %>
+                <option value="<%= option.value %>"><%= option.label %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label class="m-field">
+            <span>ملاحظة المراجعة (اختياري)</span>
+            <input id="order-note" type="text" maxlength="300" placeholder="سبب الرفض أو ملاحظة داخلية">
+          </label>
+        </div>
+
+        <div class="m-review__actions">
+          <button type="button" class="m-btn m-btn--success m-btn--sm" id="order-confirm">
+            <%- include("partials/icon", { name: "check" }) %>
+            <span>تأكيد وخصم المخزون</span>
+          </button>
+          <button type="button" class="m-btn m-btn--success m-btn--sm" data-payment="paid">
+            <%- include("partials/icon", { name: "check" }) %>
+            <span>اعتماد الإيصال</span>
+          </button>
+          <button type="button" class="m-btn m-btn--danger m-btn--sm" data-payment="failed">
+            <%- include("partials/icon", { name: "close" }) %>
+            <span>رفض الإيصال</span>
+          </button>
+          <button type="button" class="m-btn m-btn--copper m-btn--sm" id="order-save">
+            <span>حفظ التغييرات</span>
+          </button>
+        </div>
+        <p class="m-hint" id="order-hint">اعتماد الإيصال يؤكد الطلب الجديد تلقائياً.</p>
+      </section>
+    </div>
+  </dialog>
+
+  <!-- معاينة الإيصال -->
+  <dialog class="m-modal m-modal--viewer" id="proof-dialog" aria-label="معاينة الإيصال">
+    <header class="m-modal__head">
+      <h2>إيصال التحويل</h2>
+      <button type="button" class="m-icon-btn" data-close-dialog aria-label="إغلاق">
+        <%- include("partials/icon", { name: "close" }) %>
+      </button>
+    </header>
+    <div class="m-modal__body m-viewer">
+      <img id="proof-image" alt="صورة إيصال التحويل" hidden>
+      <iframe id="proof-frame" title="ملف إيصال التحويل" hidden></iframe>
+    </div>
+  </dialog>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

@@ -1,0 +1,92 @@
+/* ══════════════════════════════════════════════════════════
+   التصنيفات: جدول الأقسام وعدد المنتجات المرتبطة
+   ══════════════════════════════════════════════════════════ */
+
+.m-table--categories td:first-child {
+  max-width: 18rem;
+}
+
+.m-table--categories .m-cell-id {
+  display: block;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m-table--categories td:nth-child(2),
+.m-table--categories td:nth-child(3) {
+  color: var(--ink-soft);
+}
+
+.m-table--categories td:nth-child(5) {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+.m-cat-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-cat-count.is-filled {
+  background: var(--success-wash);
+  color: var(--success);
+}
+
+.m-cat-count.is-empty {
+  background: var(--sand);
+  color: var(--ink-mute);
+}
+
+a.m-cat-count:hover {
+  text-decoration: underline;
+}
+
+.m-cat-parent {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+#category-form .m-field textarea {
+  min-height: 3.4rem;
+}
+
+#category-delete {
+  margin-inline-start: auto;
+}
+
+@media (max-width: 720px) {
+  .m-table--categories td:first-child {
+    max-width: 11rem;
+  }
+
+  .m-table--categories .m-cell-id {
+    max-width: 9rem;
+  }
+
+  .m-table--categories th:nth-child(3),
+  .m-table--categories td:nth-child(3),
+  .m-table--categories th:nth-child(5),
+  .m-table--categories td:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .m-table--categories th:nth-child(2),
+  .m-table--categories td:nth-child(2) {
+    display: none;
+  }
+}

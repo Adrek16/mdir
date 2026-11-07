@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss: "reviews" }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "مراجعة تقييمات العملاء قبل نشرها" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">التقييمات</p>
+          <h2>تقييمات العملاء</h2>
+          <p>لا يظهر أي تقييم في المتجر قبل اعتماده. الاعتماد يحدّث متوسط تقييم المنتج تلقائياً.</p>
+        </div>
+        <button type="button" class="m-btn m-btn--ghost m-btn--sm" id="reviews-refresh">
+          <%- include("partials/icon", { name: "refresh" }) %>
+          <span>تحديث</span>
+        </button>
+      </section>
+
+      <section class="m-card m-reviews-toolbar">
+        <div class="m-reviews-tabs" role="tablist" aria-label="حالة التقييمات">
+          <button type="button" class="m-reviews-tab is-active" data-status="" role="tab">
+            الكل <span class="m-count" id="count-all">—</span>
+          </button>
+          <button type="button" class="m-reviews-tab" data-status="pending" role="tab">
+            بانتظار المراجعة <span class="m-count" id="count-pending">—</span>
+          </button>
+          <button type="button" class="m-reviews-tab" data-status="approved" role="tab">
+            معتمدة <span class="m-count" id="count-approved">—</span>
+          </button>
+          <button type="button" class="m-reviews-tab" data-status="rejected" role="tab">
+            مرفوضة <span class="m-count" id="count-rejected">—</span>
+          </button>
+        </div>
+
+        <label class="m-field m-search">
+          <span class="m-sr-only">بحث</span>
+          <%- include("partials/icon", { name: "search" }) %>
+          <input id="reviews-search" type="search" autocomplete="off"
+                 placeholder="اسم المنتج، العميل، نص التقييم…">
+        </label>
+      </section>
+
+      <div class="m-reviews-list" id="reviews-list" aria-live="polite">
+        <p class="m-reviews-empty">جارٍ التحميل…</p>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>
