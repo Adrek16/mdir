@@ -1,0 +1,45 @@
+name: Deploy dashboard to Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: netlify-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Link Netlify project (CLI state)
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          mkdir -p .netlify
+          printf '{"siteId":"%s"}\n' "$NETLIFY_SITE_ID" > .netlify/state.json
+
+      - name: Deploy to production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: >-
+          npx --yes netlify-cli@27.16.2 deploy
+          --prod --no-build --skip-functions-cache
+          --site "$NETLIFY_SITE_ID"
+          --auth "$NETLIFY_AUTH_TOKEN"

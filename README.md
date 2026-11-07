@@ -74,13 +74,15 @@ npm run dev     # http://127.0.0.1:4100
 
 **التحقق بعد النشر:** افتح `/api/health` ثم `/login`. الأولى تعطي `{ ok: true, data: { configured: true, runtime: "netlify-function", ... } }`، والثانية صفحة الدخول العربية (200).
 
-**نشر موقع أنشئ يدوياً (Drop):** الربط مع GitHub هو الطريق المفضل، لكن يمكن أيضاً نشر النسخة الحالية مباشرة عبر CLI بعد `netlify link --id <site-id>`:
+**النشر التلقائي:** كل `push` إلى `main` يشغّل `.github/workflows/deploy.yml`، فيثبّت الاعتماديات بـ `npm ci` ثم ينشر على Netlify عبر CLI. يحتاج سرّين في إعدادات المستودع (`Settings → Secrets and variables → Actions`): `NETLIFY_AUTH_TOKEN` و `NETLIFY_SITE_ID`. لا تُخزَّن في الكود. يمكن تشغيله يدوياً بـ `workflow_dispatch`.
+
+**نشر يدوي بديل:** من مجلد المشروع بعد `netlify link --id <site-id>`:
 
 ```bash
 netlify deploy --prod --no-build --skip-functions-cache
 ```
 
-تغيير متغيرات البيئة لا ينعكس على نسخة منشورة بالفعل — أعد النشر بعد أي تعديل عليها.
+تغيير متغيرات البيئة لا ينعكس على نسخة منشورة بالفعل — أعد النشر بعد أي تعديل عليها. الأمر نفسه ينطبق على **موقع المتجر**: متغير `STORE_REVALIDATE_SECRET` يجب أن يكون متطابقاً في الموقعين، ويحتاج المتجر إعادة نشر حتى يقرأه `/api/revalidate`.
 
 **أربع ملاحظات تقنية مهمة عن حزمة الدالة** (أخطاء شائعة عند استخدام esbuild مع Express):
 
@@ -89,7 +91,7 @@ netlify deploy --prod --no-build --skip-functions-cache
 3. Express يحمّل محرك القوالب بـ `require("ejs")` الديناميكي الذي لا يراه esbuild؛ لذلك يُسجَّل صراحةً بـ `app.engine("ejs", ejs.renderFile)` وإلا ظهر `Cannot find module 'ejs'` عند أول صفحة.
 4. `serverless-http` يضع جسم الطلب كـ `Buffer` مع `req.complete = true`، فيتخطى `body-parser` في Express 5 التحليل وتفشل كل طلبات `POST` JSON. لذلك يسبق `express.json()` وسيط `normalizeServerlessBody()` يحلّل أجسام `application/json` فقط ويترك أجسام رفع الصور كما هي.
 
-**تحذير أمني:** بنشر اللوحة على `*.netlify.app` تصبح صفحة `/login` في متناول الجميع. استخدم كلمة مرور قوية جداً، وفعّل `ADMIN_IP_ALLOWLIST` أو حماية بكلمة مرور على مستوى الموقع، وراجع صلاحيات مفتاح `service_role`. لا تضع بيانات دخول اختبار في المستودع.
+**تحذير أمني:** بنشر اللوحة على `*.netlify.app` تصبح صفحة `/login` في متناول الجميع. حساب الاختبار `admin@stoor.local` الذي كان في تاريخ المستودع **مُعطَّل**، واستُبدل بحساب مدير خاص بكلمة مرور عشوائية قوية محفوظة في `.env` المحلي فقط. راجع صلاحيات مفتاح `service_role`، ويمكنك كذلك تفعيل `ADMIN_IP_ALLOWLIST` بعناوينك الثابتة. لا تضع بيانات دخول في المستودع.
 
 **اعتبارات بيئة الدوال:**
 
@@ -157,7 +159,7 @@ import { api, dom, fmt, ui, table } from "../shared.js";
 - حد لمحاولات الدخول: 8 محاولات كل 15 دقيقة لكل عنوان، في كوكي موقّع لا يضيع مع إعادة تشغيل الدالة.
 - رفض الطلبات العابرة للمواقع (`sec-fetch-site: cross-site`) ومطابقة `Origin` مع host الطلب، مع `ADMIN_IP_ALLOWLIST` الاختياري.
 - ترويسات `CSP` / `HSTS` / `COOP` / `CORP` / `X-Frame-Options` / `Referrer-Policy` / `Permissions-Policy`.
-- **يُنصح قبل النشر العام:** ربط الموقع بـ GitHub للنشر التلقائي، وتفعيل حماية على مستوى الموقع أو تحديد IP، واستبدال حساب المدير التجريبي بحساب خاص قوي.
+- **النشر العام:** النشر التلقائي مفعّل عبر GitHub Actions، وحساب المدير التجريبي المُسرَّب مُعطَّل ومُستبدل بحساب خاص. الحماية الإضافية الاختيارية هي `ADMIN_IP_ALLOWLIST` — تُترك فارغة لتجنّب حجب الوصول عند تغيّر IP.
 
 ---
 
