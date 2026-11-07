@@ -1,4 +1,6 @@
 node_modules/
+.netlify/
+.workbuddy-ai/
 .env
 .env.local
 *.log

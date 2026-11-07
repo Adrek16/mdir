@@ -1,0 +1,30 @@
+# نشر لوحة مدير ستور على Netlify.
+#
+# مهم: Netlify Drop (سحب المجلد يدوياً) يستضيف ملفات ثابتة فقط ولا يشغّل
+# الدوال، وسيعطي "Page not found". استخدم:
+#   Add new site → Import an existing project → GitHub → Adrek16/mdir
+
+[build]
+  publish = "public"
+  command = "npm ci"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # قوالب EJS تُقرأ من القرص وقت التنفيذ، لذا تُنسخ داخل حزمة الدالة.
+  included_files = ["views/**"]
+
+# الأصول الثابتة (/assets/* و /fonts/*) تُخدَم مباشرة من publish عبر CDN،
+# ولا تصل إلى الدالة. كل ما عداها يُوجَّه إلى Express.
+[[redirects]]
+  from = "/"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200

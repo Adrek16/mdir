@@ -25,7 +25,11 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 export const env = Object.freeze({
   host: process.env.HOST?.trim() || "127.0.0.1",
   port,
-  isProduction: process.env.NODE_ENV === "production",
+  // Netlify Functions لا تضمن NODE_ENV=production وقت التنفيذ؛ كوكي الجلسة
+  // يجب أن يحمل Secure لأن الموقع يُخدَم عبر HTTPS.
+  isProduction:
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT),
 
   supabaseUrl: required("SUPABASE_URL").replace(/\/+$/, ""),
   serviceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY"),
