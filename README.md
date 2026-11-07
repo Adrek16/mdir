@@ -1,13 +1,16 @@
 # لوحة مدير ستور
 
-لوحة إدارة مستقلة لمتجر **ستور**، صُممت للتشغيل المحلي ويمكن نشرها على Netlify Functions.
-الواجهة بنفس هوية المتجر (Cairo، كريمي، حبر، نحاسي، عنابي)، والبيانات من نفس مشروع Supabase.
+**تطبيق ويب مستضاف** لإدارة متجر **ستور**، يعمل على Netlify Functions (أو أي منصة تستضيف عملية Node)، وقاعدة بياناته السحابية هي **Supabase** (Auth + Database + Storage).
+الواجهة بنفس هوية المتجر (Cairo، كريمي، حبر، نحاسي، عنابي).
 العملة **ريال يمني (ر.ي)**، والمدينة (صنعاء) يدخلها المدير من «معلومات المتجر».
 
-> **الخطة الحاكمة لتطوير اللوحة:** [`docs/manager-screens-plan.md`](docs/manager-screens-plan.md)  
-> **خطة شاشات العملاء:** `C:\Users\L\Desktop\stoor\docs\customer-screens-plan.md`
+نفس تطبيق Express يُستخدم في الوضعين: `server/index.js` يشغّله كخادم Node مستقل، و`netlify/functions/api.mjs` يغلّفه بـ `serverless-http`. لا توجد نسخة «محلية فقط» منفصلة.
 
-> **تحذير أمني:** التصميم الأصلي محلي (`127.0.0.1`) ويستخدم مفتاح `service_role`. نشر اللوحة على نطاق عام يجعل صفحة دخول المدير متاحة للجميع — راجع [النشر على Netlify](#النشر-على-netlify) قبل تفعيله.
+> **الخطة الحاكمة لتطوير اللوحة:** [`docs/manager-screens-plan.md`](docs/manager-screens-plan.md)
+
+> **تحذير أمني:** اللوحة تستخدم مفتاح `service_role` على الخادم فقط، لكن نشرها على نطاق عام يجعل صفحة دخول المدير متاحة للجميع. استخدم حساب مدير بكلمة مرور قوية، وقيّد الوصول بـ `ADMIN_IP_ALLOWLIST` أو حماية على مستوى الموقع — راجع [الأمان](#الأمان).
+
+> **قاعدة البيانات:** لا حاجة لخدمة قاعدة بيانات إضافية (أو موصّل MCP). Supabase هو بالفعل backend سحابي كامل؛ لذلك لم يُفعّل أي backend ثانٍ لتجنّب ازدواج المصدر.
 
 ---
 
@@ -19,23 +22,27 @@ npm run dev     # http://127.0.0.1:4100
 ```
 
 - `npm run dev` يعيد التشغيل تلقائياً عند تعديل الملفات.
-- `npm start` تشغيل عادي بلا مراقبة.
+- `npm start` تشغيل عادي بلا مراقبة؛ على منصة Node اترك `HOST` فارغاً (يصبح `0.0.0.0` في الإنتاج) ودع المنصة تحقن `PORT`.
 - `npm run check` فحص صياغة نقطة الدخول.
+- `GET /api/health` يعيد حالة الضبط ونوع البيئة (`netlify-function` / `node-server`) والمزايا المفعّلة — مفيد للتحقق بعد النشر.
 
 ### متغيرات البيئة
 
-انسخ `.env.example` إلى `.env` واملأ:
+انسخ `.env.example` إلى `.env` واملأ؛ ولا ترفع `.env` إلى المستودع:
 
 | المتغير | الوصف |
 |---|---|
-| `HOST` | `127.0.0.1` — محلي فقط |
-| `PORT` | `4100` |
+| `HOST` | محلياً `127.0.0.1`؛ على منصة Node اتركه فارغاً ليكون `0.0.0.0` |
+| `PORT` | `4100` محلياً؛ تحقنه المنصة في الاستضافة |
 | `SUPABASE_URL` | رابط مشروع المتجر |
 | `SUPABASE_SERVICE_ROLE_KEY` | مفتاح الخادم — لا يظهر في المتصفح أبداً |
 | `SESSION_SECRET` | مفتاح توقيع الجلسة (32 بايت عشوائية على الأقل) |
-| `STORE_URL` | رابط المتجر المحلي (زر «المتجر») |
+| `PUBLIC_SITE_URL` | الرابط العام للوحة — يُستخدم للتحقق من `Origin` (اختياري؛ يُستنتج من الطلب إن تُرك فارغاً) |
+| `ADMIN_IP_ALLOWLIST` | عناوين IP مسموح بها مفصولة بفواصل (اختياري) |
+| `STORE_URL` | رابط المتجر العام — إن تُرك فارغاً يُخفى زر «المتجر» (لا تستخدم `localhost` على موقع منشور) |
 | `STORE_REVALIDATE_URL` | مسار تحديث كاش المتجر (اختياري) |
 | `STORE_REVALIDATE_SECRET` | سر الـ webhook (اختياري) |
+| `MANAGER_URL` / `ADMIN_EMAIL` / `ADMIN_PASSWORD` | لسكربتات الاختبار فقط، وليست مطلوبة لتشغيل الموقع |
 
 ### النشر على Netlify
 
@@ -56,10 +63,16 @@ npm run dev     # http://127.0.0.1:4100
 | `SUPABASE_URL` | نعم | رابط مشروع المتجر |
 | `SUPABASE_SERVICE_ROLE_KEY` | نعم | مفتاح الخادم |
 | `SESSION_SECRET` | نعم | سر توقيع الجلسة (32 بايت عشوائية على الأقل) |
-| `STORE_URL` | لا | رابط المتجر (زر «المتجر») |
+| `PUBLIC_SITE_URL` | لا | `https://<site>.netlify.app` — يقوّي تحقق `Origin` |
+| `ADMIN_IP_ALLOWLIST` | لا | تقييد اللوحة على عناوين IP بعينها |
+| `STORE_URL` | لا | رابط المتجر العام (إن غاب يُخفى الزر) — **لا تضع `localhost`** |
 | `STORE_REVALIDATE_URL` / `STORE_REVALIDATE_SECRET` | لا | تحديث كاش المتجر |
 
+يفضّل ضبط المفاتيح الثلاثة الأولى كـ **secrets** في سياق `production` / `deploy-preview` / `branch-deploy`.
+
 بدون المتغيرات الثلاثة الأولى يعرض الموقع صفحة إعداد عربية (503) تذكر أسماء النواقص بدل انهيار الدالة؛ محلياً يظل `npm start` يتوقف برسالة واضحة. أمر البناء `npm ci` يثبّت الاعتماديات من `package-lock.json`؛ لا توجد خطوة تجميع للواجهة.
+
+**التحقق بعد النشر:** افتح `/api/health` ثم `/login`. الأولى تعطي `{ ok: true, data: { configured: true, runtime: "netlify-function", ... } }`، والثانية صفحة الدخول العربية (200).
 
 **نشر موقع أنشئ يدوياً (Drop):** الربط مع GitHub هو الطريق المفضل، لكن يمكن أيضاً نشر النسخة الحالية مباشرة عبر CLI بعد `netlify link --id <site-id>`:
 
@@ -69,19 +82,22 @@ netlify deploy --prod --no-build --skip-functions-cache
 
 تغيير متغيرات البيئة لا ينعكس على نسخة منشورة بالفعل — أعد النشر بعد أي تعديل عليها.
 
-**ثلاث ملاحظات تقنية مهمة عن حزمة الدالة** (أخطاء شائعة عند استخدام esbuild مع Express):
+**أربع ملاحظات تقنية مهمة عن حزمة الدالة** (أخطاء شائعة عند استخدام esbuild مع Express):
 
 1. `server/env.js` لا يستدعي `process.exit(1)` داخل الدالة، وإلا قتل بيئة التشغيل وأعطى `Runtime exited with error: exit status 1`.
 2. مُجمّع Netlify يُخرج الدالة بصيغة CommonJS، فيكون `import.meta.url` فارغاً؛ لذلك يعتمد `server/app.js` على `process.cwd()` / `LAMBDA_TASK_ROOT` لتحديد مجلد `views` بدلاً من `fileURLToPath(import.meta.url)`.
 3. Express يحمّل محرك القوالب بـ `require("ejs")` الديناميكي الذي لا يراه esbuild؛ لذلك يُسجَّل صراحةً بـ `app.engine("ejs", ejs.renderFile)` وإلا ظهر `Cannot find module 'ejs'` عند أول صفحة.
+4. `serverless-http` يضع جسم الطلب كـ `Buffer` مع `req.complete = true`، فيتخطى `body-parser` في Express 5 التحليل وتفشل كل طلبات `POST` JSON. لذلك يسبق `express.json()` وسيط `normalizeServerlessBody()` يحلّل أجسام `application/json` فقط ويترك أجسام رفع الصور كما هي.
 
-**تحذير أمني:** بنشر اللوحة على `*.netlify.app` تصبح صفحة `/login` في متناول الجميع. استخدم كلمة مرور قوية جداً، وفعّل حماية بكلمة مرور على مستوى الموقع أو قيّد الوصول، وراجع صلاحيات مفتاح `service_role`.
+**تحذير أمني:** بنشر اللوحة على `*.netlify.app` تصبح صفحة `/login` في متناول الجميع. استخدم كلمة مرور قوية جداً، وفعّل `ADMIN_IP_ALLOWLIST` أو حماية بكلمة مرور على مستوى الموقع، وراجع صلاحيات مفتاح `service_role`. لا تضع بيانات دخول اختبار في المستودع.
 
-**فروق عن التشغيل المحلي:**
+**اعتبارات بيئة الدوال:**
 
-- حدّ محاولات الدخول مخزّن في الذاكرة، فلا يبقى بين استدعاءات الدالة.
+- الجلسة كوكي موقّع بلا حالة (stateless)، فتعمل بين استدعاءات الدالة بلا تخزين جلسات.
+- حدّ محاولات الدخول كوكي `stoor_throttle` موقّع بـ HMAC أيضاً، فيبقى بعد إعادة التشغيل البارد (لا `Map` في الذاكرة).
+- رفض الطلبات `cross-site` ومطابقة رأس `Origin` مع host الطلب، مع ترويسات CSP/HSTS/COOP وغيرها.
 - مهلة الدالة الافتراضية 10 ثوانٍ؛ طلبات Supabase البطيئة قد تتجاوزها.
-- `npm start` يبقى كما هو عبر `server/index.js`، ولم يتغيّر سلوكه المحلي.
+- `npm start` يبقى كما هو عبر `server/index.js`، ويستمع على `0.0.0.0` في الإنتاج.
 
 ---
 
@@ -89,16 +105,22 @@ netlify deploy --prod --no-build --skip-functions-cache
 
 ```
 مدير/
+├─ netlify/functions/api.mjs  # مدخل الدالة: serverless-http(app)
 ├─ server/
-│  ├─ index.js              # Express + EJS + الملفات الثابتة + معالجة الأخطاء
-│  ├─ env.js                # التحقق من متغيرات البيئة عند الإقلاع
+│  ├─ app.js                # تطبيق Express المشترك (محلي + دوال)
+│  ├─ index.js              # تشغيل الخادم المستقل فقط (app.listen)
+│  ├─ env.js                # متغيرات البيئة + اكتشاف بيئة الدوال
 │  ├─ session.js            # كوكي HttpOnly موقّع HMAC-SHA256
+│  ├─ throttle.js           # حدّ محاولات الدخول بكوكي موقّع (بلا حالة)
 │  ├─ http.js               # ردود JSON موحّدة + أدوات مساعدة
 │  ├─ supabase.js           # REST/Auth/Storage بلا SDK (service_role)
 │  ├─ middleware/
-│  │  └─ require-admin.js   # حارس الصفحات والـ API
+│  │  ├─ require-admin.js   # حارس الصفحات والـ API
+│  │  ├─ web-security.js    # IP allowlist + Origin/CSRF + ترويسات الأمان
+│  │  └─ serverless-body.js # تحليل أجسام JSON داخل الدالة
 │  ├─ routes/               # صفحة + نقاط API لكل قسم
 │  └─ services/             # قواعد العمل والاستعلامات
+├─ scripts/config.mjs       # إعدادات السكربتات من البيئة فقط
 ├─ views/
 │  ├─ partials/             # head / sidebar / topbar / foot / icon
 │  └─ *.ejs                 # login / dashboard / orders / products / categories / settings
@@ -128,12 +150,14 @@ import { api, dom, fmt, ui, table } from "../shared.js";
 ## الأمان
 
 - المصادقة عبر **Supabase Auth**، والدور يُقرأ من `profiles.role = 'admin'`.
-- الجلسة في كوكي `HttpOnly` + `SameSite=Lax` موقّع بـ HMAC، وتنتهي بعد 8 ساعات.
-- لا `sessionStorage` ولا كلمة مرور ثابتة في الكود.
+- الجلسة في كوكي `HttpOnly` + `SameSite=Lax` + `Secure` في الإنتاج، موقّع بـ HMAC، وتنتهي بعد 8 ساعات — بلا حالة، فتناسب الدوال السيرفرلس.
+- لا `sessionStorage` ولا كلمة مرور ثابتة في الكود؛ بيانات دخول الاختبارات تُقرأ من `ADMIN_EMAIL` / `ADMIN_PASSWORD` في `.env` فقط.
 - المفتاح السري على الخادم فقط؛ RLS مفعّل بلا سياسات عامة.
 - الإيصالات في bucket خاص وتُقرأ عبر بروكسي `/api/orders/:id/proof`.
-- حد لمحاولات الدخول: 8 محاولات كل 15 دقيقة لكل عنوان.
-- ترويسات أمان + CSP تمنع أي سكربت خارجي.
+- حد لمحاولات الدخول: 8 محاولات كل 15 دقيقة لكل عنوان، في كوكي موقّع لا يضيع مع إعادة تشغيل الدالة.
+- رفض الطلبات العابرة للمواقع (`sec-fetch-site: cross-site`) ومطابقة `Origin` مع host الطلب، مع `ADMIN_IP_ALLOWLIST` الاختياري.
+- ترويسات `CSP` / `HSTS` / `COOP` / `CORP` / `X-Frame-Options` / `Referrer-Policy` / `Permissions-Policy`.
+- **يُنصح قبل النشر العام:** ربط الموقع بـ GitHub للنشر التلقائي، وتفعيل حماية على مستوى الموقع أو تحديد IP، واستبدال حساب المدير التجريبي بحساب خاص قوي.
 
 ---
 
@@ -202,14 +226,21 @@ import { api, dom, fmt, ui, table } from "../shared.js";
 ## الاختبارات
 
 تعمل هذه السكربتات على نسخة حقيقية من قاعدة البيانات، تنشئ بيانات مؤقتة ثم تحذفها.
-يجب أن يكون المدير على `4100` والمتجر على `3000`.
+كل العناوين وبيانات الدخول تُقرأ من `.env` عبر `scripts/config.mjs`؛ لا توجد قيم ثابتة أو localhost مفترض في الكود. إن غاب أي متغير مطلوب يتوقف السكربت برسالة عربية واضحة تذكر اسمه.
+
+```dotenv
+MANAGER_URL=http://127.0.0.1:4100   # أو رابط اللوحة المستضافة
+STORE_URL=http://127.0.0.1:3000     # أو رابط المتجر الحقيقي
+ADMIN_EMAIL=...
+ADMIN_PASSWORD=...
+```
 
 ```bash
 npm run test:acceptance   # الطلبات والإيصالات والإعدادات البنكية — 22 فحصاً
 npm run test:catalog      # التصنيفات والألوان ومخزون كل لون — 27 فحصاً
 npm run test:slugs        # الروابط التلقائية والنقل والتحويلات القديمة — 23 فحصاً
-node scripts/verify-feature.mjs          # مسارات معلومات المتجر + رفع الشعار — 23 فحصاً
-node scripts/verify-product-images.mjs   # استمرارية image_path/color_images — 8 فحوص
+node --env-file=.env scripts/verify-feature.mjs          # معلومات المتجر + رفع الشعار
+node --env-file=.env scripts/verify-product-images.mjs   # استمرارية صور المنتجات
 ```
 
 > إن انقطعت الشبكة أثناء الاختبار يعيد السكربت المحاولة تلقائياً، وينظّف بياناته في كل الأحوال.

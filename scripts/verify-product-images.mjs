@@ -12,7 +12,8 @@ const cookie = `${SESSION_COOKIE}=${encodeURIComponent(
   })
 )}`;
 
-const base = `http://127.0.0.1:${process.env.PORT || 4100}`;
+const { localManagerUrl } = await import("./config.mjs");
+const base = localManagerUrl();
 
 const json = (path, method, body) =>
   fetch(base + path, {

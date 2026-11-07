@@ -32,7 +32,8 @@ async function main() {
   if (!mod?.default && mod?.error) throw mod.error;
 
   // server/index.js يستمع مباشرة؛ نستخدم fetch على المنفذ.
-  const base = `http://127.0.0.1:${process.env.PORT || 4100}`;
+  const { localManagerUrl } = await import("./config.mjs");
+  const base = localManagerUrl();
 
   const get = async (path, headers = {}) =>
     fetch(base + path, { headers: { cookie, ...headers }, redirect: "manual" });

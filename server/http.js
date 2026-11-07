@@ -21,8 +21,15 @@ export function safeNext(value, fallback = "/dashboard") {
   return value;
 }
 
-/** عنوان IP للعميل — للحد من محاولات الدخول. */
+/**
+ * عنوان IP للعميل — للحد من محاولات الدخول وقائمة السماح.
+ * Netlify يضع العنوان الحقيقي في ترويسة لا يمكن للعميل تزويرها بسهولة،
+ * ونفضّلها على x-forwarded-for التي قد يضيف إليها الوكيل قيماً.
+ */
 export function clientIp(req) {
+  const netlifyIp = req.headers["x-nf-client-connection-ip"];
+  if (typeof netlifyIp === "string" && netlifyIp.trim()) return netlifyIp.trim();
+
   const forwarded = req.headers["x-forwarded-for"];
   if (typeof forwarded === "string" && forwarded) return forwarded.split(",")[0].trim();
   return req.socket?.remoteAddress || "local";

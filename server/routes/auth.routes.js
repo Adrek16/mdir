@@ -2,35 +2,22 @@ import { Router } from "express";
 import { clientIp, fail, ok, route, safeNext } from "../http.js";
 import { requireGuest } from "../middleware/require-admin.js";
 import { clearSessionCookie, sessionCookie } from "../session.js";
+import {
+  clearThrottleCookie,
+  isBlocked,
+  nextFailure,
+  readThrottle,
+  throttleCookie,
+} from "../throttle.js";
 import { signIn } from "../services/auth.service.js";
 
 /**
  * دخول وخروج المدير.
  *
- * حد بسيط لمحاولات الدخول في الذاكرة: هذا خادم محلي،
- * فلا نحتاج مخزناً خارجياً، لكن نمنع التخمين السريع.
+ * حدّ محاولات الدخول مخزّن في كوكي موقّع (server/throttle.js) لا في ذاكرة
+ * العملية، كي يبقى سارياً بين استدعاءات دالة Netlify. الحدّ النهائي على
+ * تخمين كلمات المرور هو حدّ Supabase Auth نفسه.
  */
-
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS = 8;
-const attempts = new Map();
-
-function tooManyAttempts(ip) {
-  const record = attempts.get(ip);
-  if (!record || record.resetAt < Date.now()) return false;
-  return record.count >= MAX_ATTEMPTS;
-}
-
-function registerFailure(ip) {
-  const now = Date.now();
-  const record = attempts.get(ip);
-
-  if (!record || record.resetAt < now) {
-    attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return;
-  }
-  record.count += 1;
-}
 
 const router = Router();
 
@@ -45,20 +32,21 @@ router.post(
   "/api/auth/login",
   route(async (req, res) => {
     const ip = clientIp(req);
+    const state = readThrottle(req, ip);
 
-    if (tooManyAttempts(ip)) {
+    if (isBlocked(state)) {
       return fail(res, 429, "محاولات كثيرة — انتظر 15 دقيقة ثم حاول مجدداً");
     }
 
     const result = await signIn(req.body?.email, req.body?.password);
 
     if (!result.ok) {
-      registerFailure(ip);
+      res.setHeader("Set-Cookie", throttleCookie(nextFailure(state), ip));
       return fail(res, result.status, result.error);
     }
 
-    attempts.delete(ip);
-    res.setHeader("Set-Cookie", sessionCookie(result.signed));
+    // كوكيان: مسح عدّاد المحاولات + إنشاء الجلسة.
+    res.setHeader("Set-Cookie", [clearThrottleCookie(), sessionCookie(result.signed)]);
     return ok(res, {
       user: { email: result.session.email },
       next: safeNext(req.body?.next, "/dashboard"),
@@ -67,7 +55,7 @@ router.post(
 );
 
 router.post("/api/auth/logout", (req, res) => {
-  res.setHeader("Set-Cookie", clearSessionCookie());
+  res.setHeader("Set-Cookie", [clearSessionCookie(), clearThrottleCookie()]);
   return ok(res, { loggedOut: true });
 });
 

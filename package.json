@@ -2,7 +2,7 @@
   "name": "stoor-manager",
   "version": "0.1.0",
   "private": true,
-  "description": "لوحة مدير متجر ستور — تعمل محلياً على Node.js + Supabase",
+  "description": "لوحة مدير متجر ستور — تطبيق ويب مستضاف (Netlify Functions أو Node) مع Supabase",
   "type": "module",
   "engines": {
     "node": ">=22"

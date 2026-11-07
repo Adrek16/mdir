@@ -9,15 +9,11 @@
  * التشغيل: npm run test:slugs
  */
 
-const manager = process.env.MANAGER_URL || "http://127.0.0.1:4100";
-const store = process.env.STORE_URL || "http://localhost:3000";
-const supabaseUrl = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { adminCredentials, managerUrl, storeUrl, supabaseConfig } from "./config.mjs";
 
-if (!supabaseUrl || !serviceKey) {
-  console.error("missing env");
-  process.exit(2);
-}
+const manager = managerUrl();
+const store = storeUrl();
+const { supabaseUrl, serviceKey } = supabaseConfig();
 
 const sbHeaders = {
   apikey: serviceKey,
@@ -159,7 +155,7 @@ async function cleanup() {
 try {
   const login = await call("/api/auth/login", {
     method: "POST",
-    body: { email: "admin@stoor.local", password: "Stoor@Dev2026" },
+    body: adminCredentials(),
   });
   check("login", login.status === 200);
 

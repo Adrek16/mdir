@@ -3,8 +3,10 @@ import ejs from "ejs";
 import path from "node:path";
 import { existsSync } from "node:fs";
 import { env } from "./env.js";
-import { fail } from "./http.js";
+import { fail, ok } from "./http.js";
 import { readSession } from "./middleware/require-admin.js";
+import { webSecurity } from "./middleware/web-security.js";
+import { normalizeServerlessBody } from "./middleware/serverless-body.js";
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import ordersRoutes from "./routes/orders.routes.js";
@@ -94,6 +96,21 @@ app.set("views", viewsDir);
 // بتسجيل المحرك صراحةً يصبح استيراد ejs ثابتاً ويُضمَّن في الحزمة.
 app.engine("ejs", ejs.renderFile);
 
+// ── فحص جاهزية عام (للمراقبة) ──────────────────────────────
+// يبقى متاحاً حتى لو كان الإعداد ناقصاً، ولا يكشف أي قيمة سرية.
+app.get("/api/health", (req, res) =>
+  ok(res, {
+    status: "ok",
+    configured: env.isConfigured,
+    runtime: isServerless ? "netlify-function" : "node-server",
+    features: {
+      storeLink: Boolean(env.storeUrl),
+      storeRevalidate: env.canRevalidate,
+      ipAllowlist: env.adminIpAllowlist.length > 0,
+    },
+  })
+);
+
 // ── إعداد ناقص على Netlify ─────────────────────────────────
 // لا تقتل الدالة عند الإقلاع (Runtime.ExitError / exit status 1)؛
 // اعرض صفحة عربية تشرح المتغيرات الناقصة وكيفية إضافتها.
@@ -130,11 +147,22 @@ small{color:#6b655c}
   });
 }
 
+// ── حماية الويب ────────────────────────────────────────────
+// قائمة IP اختيارية + رفض طلبات التعديل القادمة من مصدر خارجي (CSRF).
+app.use(webSecurity());
+
 // ── ترويسات أساسية ─────────────────────────────────────────
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  // الموقع يُخدَم عبر HTTPS خلف CDN؛ HSTS يمنع الرجوع إلى http لاحقاً.
+  if (env.isProduction) {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000");
+  }
   res.setHeader(
     "Content-Security-Policy",
     [
@@ -168,6 +196,8 @@ app.use(
 app.use("/fonts", express.static(path.join(projectRoot, "public", "fonts"), staticOptions));
 
 // ── قراءة JSON ─────────────────────────────────────────────
+// على Netlify: req.body يأتي Buffer جاهزاً قبل body-parser → نوحّده أولاً.
+app.use(normalizeServerlessBody());
 app.use(express.json({ limit: "100kb" }));
 
 // ── سياق مشترك لكل الصفحات ─────────────────────────────────

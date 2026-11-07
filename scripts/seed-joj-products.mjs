@@ -12,7 +12,8 @@ import path from "node:path";
 
 const { signSession, SESSION_COOKIE } = await import("../server/session.js");
 
-const base = `http://127.0.0.1:${process.env.PORT || 4100}`;
+const { localManagerUrl } = await import("./config.mjs");
+const base = localManagerUrl();
 const now = Date.now();
 const cookie = `${SESSION_COOKIE}=${encodeURIComponent(
   signSession({ uid: "00000000-0000-0000-0000-000000000000", email: "seed@local", role: "admin", iat: now, exp: now + 3 * 60 * 60 * 1000 })

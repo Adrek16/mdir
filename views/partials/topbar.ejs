@@ -11,11 +11,13 @@
   </div>
 
   <div class="m-topbar__actions">
-    <a class="m-btn m-btn--ghost m-btn--sm m-topbar__store" href="<%= storeUrl %>" target="_blank" rel="noreferrer noopener">
-      <%- include("icon", { name: "store" }) %>
-      <span>المتجر</span>
-      <%- include("icon", { name: "external", className: "m-icon--xs" }) %>
-    </a>
+    <% if (storeUrl) { %>
+      <a class="m-btn m-btn--ghost m-btn--sm m-topbar__store" href="<%= storeUrl %>" target="_blank" rel="noreferrer noopener">
+        <%- include("icon", { name: "store" }) %>
+        <span>المتجر</span>
+        <%- include("icon", { name: "external", className: "m-icon--xs" }) %>
+      </a>
+    <% } %>
 
     <% if (admin) { %>
       <span class="m-user" title="<%= admin.email %>">
