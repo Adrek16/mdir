@@ -17,6 +17,7 @@ import reviewsRoutes from "./routes/reviews.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
 import storeInfoRoutes from "./routes/store-info.routes.js";
+import accountRoutes from "./routes/account.routes.js";
 import { pendingReviewsCount } from "./services/reviews.service.js";
 
 /**
@@ -242,6 +243,7 @@ app.use(reviewsRoutes);
 app.use(reportsRoutes);
 app.use(settingsRoutes);
 app.use(storeInfoRoutes);
+app.use(accountRoutes);
 
 // ── 404 ───────────────────────────────────────────────────
 app.use((req, res) => {

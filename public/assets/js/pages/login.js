@@ -6,7 +6,7 @@ import { api, dom } from "../shared.js";
  */
 
 const form = dom.$("#login-form");
-const emailInput = dom.$("#login-email");
+const identifierInput = dom.$("#login-identifier");
 const passwordInput = dom.$("#login-password");
 const nextInput = dom.$("#login-next");
 const errorBox = dom.$("#login-error");
@@ -26,11 +26,11 @@ form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   hideError();
 
-  const email = emailInput?.value.trim() ?? "";
+  const identifier = identifierInput?.value.trim() ?? "";
   const password = passwordInput?.value ?? "";
 
-  if (!email || !password) {
-    showError("أدخل البريد وكلمة المرور");
+  if (!identifier || !password) {
+    showError("أدخل البريد أو اسم المستخدم وكلمة المرور");
     return;
   }
 
@@ -39,7 +39,7 @@ form?.addEventListener("submit", async (event) => {
   try {
     const data = await api.post(
       "/api/auth/login",
-      { email, password, next: nextInput?.value || "/dashboard" },
+      { identifier, password, next: nextInput?.value || "/dashboard" },
       { redirectOn401: false }
     );
     location.href = data.next || "/dashboard";
@@ -51,5 +51,5 @@ form?.addEventListener("submit", async (event) => {
   }
 });
 
-emailInput?.addEventListener("input", hideError);
+identifierInput?.addEventListener("input", hideError);
 passwordInput?.addEventListener("input", hideError);

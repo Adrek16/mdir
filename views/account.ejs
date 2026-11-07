@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <%- include("partials/head", { title, pageCss }) %>
+</head>
+<body class="m-app">
+  <a class="m-skip" href="#content">تجاوز إلى المحتوى</a>
+
+  <%- include("partials/sidebar") %>
+
+  <div class="m-shell">
+    <%- include("partials/topbar", { title, subtitle: "إدارة حساب المدير وكلمة المرور واسم المستخدم" }) %>
+
+    <main class="m-main" id="content">
+      <section class="m-page-head">
+        <div>
+          <p class="m-eyebrow">الحساب</p>
+          <h2>حسابي</h2>
+          <p>اطّلع على بيانات حسابك وغيّر كلمة المرور واسم المستخدم. كل العمليات تتم على الخادم بسرّية تامة.</p>
+        </div>
+      </section>
+
+      <div class="m-grid-2 m-grid-2--aside">
+        <div class="m-pay-stack">
+          <!-- بيانات الحساب -->
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>بيانات الحساب</h3>
+                <p>تُقرأ من Supabase ولا يمكن تعديلها من هنا.</p>
+              </div>
+            </header>
+            <div class="m-account-info" id="account-info" aria-live="polite">
+              <div class="m-account-info__loading">جارٍ التحميل…</div>
+            </div>
+          </section>
+
+          <!-- تغيير كلمة المرور -->
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>تغيير كلمة المرور</h3>
+                <p>أدخل كلمة المرور الحالية ثم الجديدة (8 أحرف على الأقل، حروف وأرقام).</p>
+              </div>
+            </header>
+
+            <form class="m-form" id="password-form" novalidate>
+              <label class="m-field">
+                <span>كلمة المرور الحالية</span>
+                <input id="pw-current" name="currentPassword" type="password"
+                       autocomplete="current-password" placeholder="••••••••" required>
+              </label>
+
+              <label class="m-field">
+                <span>كلمة المرور الجديدة</span>
+                <input id="pw-new" name="newPassword" type="password"
+                       autocomplete="new-password" placeholder="••••••••" required>
+              </label>
+
+              <label class="m-field">
+                <span>تأكيد كلمة المرور الجديدة</span>
+                <input id="pw-confirm" name="confirmPassword" type="password"
+                       autocomplete="new-password" placeholder="••••••••" required>
+              </label>
+
+              <p class="m-form-error" id="pw-error" role="alert" hidden></p>
+              <p class="m-form-success" id="pw-success" role="status" hidden></p>
+
+              <div class="m-form__actions">
+                <button type="submit" class="m-btn m-btn--copper" id="pw-submit">
+                  تغيير كلمة المرور
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- اسم المستخدم -->
+          <section class="m-card">
+            <header class="m-card__head">
+              <div>
+                <h3>اسم المستخدم</h3>
+                <p>يُستخدم لتسجيل الدخول بدل البريد الإلكتروني. (3–32 حرفاً: حروف، أرقام، . _ -)</p>
+              </div>
+            </header>
+
+            <form class="m-form" id="username-form" novalidate>
+              <label class="m-field">
+                <span>اسم المستخدم</span>
+                <input id="un-input" name="username" type="text" dir="ltr"
+                       autocomplete="username" maxlength="32"
+                       placeholder="admin" required>
+              </label>
+
+              <p class="m-form-error" id="un-error" role="alert" hidden></p>
+              <p class="m-form-success" id="un-success" role="status" hidden></p>
+
+              <div class="m-form__actions">
+                <button type="submit" class="m-btn m-btn--copper" id="un-submit">
+                  حفظ اسم المستخدم
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <aside class="m-card m-note-card">
+          <h3>ملاحظات أمنية</h3>
+          <ul class="m-note-list">
+            <li>كلمة المرور تُحدَّث عبر Supabase Auth Admin API ولا تُخزَّن في المتصفح.</li>
+            <li>قبل التغيير يُتحقق من كلمة المرور الحالية بمحاولة دخول بها.</li>
+            <li>اسم المستخدم فريد لكل مدير — لا يمكن تكراره.</li>
+            <li>الدخول يدعم البريد الإلكتروني أو اسم المستخدم بعد ضبطه.</li>
+            <li>بعد تغيير كلمة المرور تبقى جلستك الحالية فعّالة حتى انتهاؤها.</li>
+          </ul>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <%- include("partials/foot") %>
+</body>
+</html>

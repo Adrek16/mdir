@@ -1,0 +1,62 @@
+/* ── شاشة حسابي ───────────────────────────────────────────── */
+
+.m-account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 4px;
+}
+
+.m-account-info__loading {
+  color: var(--muted, #6b655c);
+  font-size: 14px;
+}
+
+.m-account-info__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border, #e3ddd2);
+}
+
+.m-account-info__row:last-child {
+  border-bottom: none;
+}
+
+.m-account-info__label {
+  font-size: 13px;
+  color: var(--muted, #6b655c);
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.m-account-info__value {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: inline-end;
+  word-break: break-all;
+}
+
+.m-account-info__value code {
+  background: var(--surface-2, #f0ece4);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  direction: ltr;
+  display: inline-block;
+}
+
+.m-account-info__badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.m-account-info__badge--admin {
+  background: var(--copper-soft, #f5e6d8);
+  color: var(--copper-dark, #8a5a2b);
+}

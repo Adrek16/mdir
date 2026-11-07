@@ -38,7 +38,7 @@ router.post(
       return fail(res, 429, "محاولات كثيرة — انتظر 15 دقيقة ثم حاول مجدداً");
     }
 
-    const result = await signIn(req.body?.email, req.body?.password);
+    const result = await signIn(req.body?.identifier || req.body?.email, req.body?.password);
 
     if (!result.ok) {
       res.setHeader("Set-Cookie", throttleCookie(nextFailure(state), ip));

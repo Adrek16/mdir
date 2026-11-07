@@ -22,7 +22,7 @@
     <% if (admin) { %>
       <span class="m-user" title="<%= admin.email %>">
         <span class="m-user__dot" aria-hidden="true"></span>
-        <span class="m-user__email"><%= admin.email %></span>
+        <span class="m-user__email"><%= admin.fullName || admin.email %></span>
       </span>
     <% } %>
 

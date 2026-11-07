@@ -173,6 +173,37 @@ export async function sbAuthPassword(email, password) {
   };
 }
 
+/** تحديث مستخدم عبر Supabase Auth Admin API (تغيير كلمة المرور…). */
+export async function sbAdminUpdateUser(uid, payload) {
+  let response;
+  try {
+    response = await fetch(`${env.supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(uid)}`, {
+      method: "PUT",
+      headers: {
+        ...baseHeaders,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch {
+    throw new SupabaseError("تعذّر الاتصال بخادم المصادقة", 503);
+  }
+
+  const data = await parseBody(response);
+
+  if (!response.ok) {
+    const raw = `${data?.error_description ?? ""} ${data?.msg ?? ""} ${data?.message ?? ""}`.toLowerCase();
+    const msg = raw.includes("password") && raw.includes("weak")
+      ? "كلمة المرور ضعيفة جداً"
+      : String(data?.message || data?.msg || "تعذّر تحديث المستخدم");
+    throw new SupabaseError(msg, response.status);
+  }
+
+  return data;
+}
+
 /** يجلب كائن الإيصال من المخزن الخاص ويعيد Response كما هو. */
 export async function sbFetchObject(bucket, objectPath) {
   const safePath = String(objectPath)
