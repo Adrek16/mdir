@@ -96,6 +96,38 @@ app.set("views", viewsDir);
 // بتسجيل المحرك صراحةً يصبح استيراد ejs ثابتاً ويُضمَّن في الحزمة.
 app.engine("ejs", ejs.renderFile);
 
+// ── ترويسات الأمان ────────────────────────────────────────
+// مُسجَّلة قبل كل المسارات (بما فيها /api/health وصفحة الإعداد الناقص)
+// لتصل إلى كل رد تخرجه الدالة، لا إلى الصفحات فقط.
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  // الموقع يُخدَم عبر HTTPS خلف CDN؛ HSTS يمنع الرجوع إلى http لاحقاً.
+  if (env.isProduction) {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000");
+  }
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      // صور الشعار والمنتجات تُعرض من Supabase Storage العام.
+      `img-src 'self' data: blob: ${new URL(env.supabaseUrl).origin}`,
+      "font-src 'self'",
+      "style-src 'self'",
+      "script-src 'self'",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join("; ")
+  );
+  next();
+});
+
 // ── فحص جاهزية عام (للمراقبة) ──────────────────────────────
 // يبقى متاحاً حتى لو كان الإعداد ناقصاً، ولا يكشف أي قيمة سرية.
 app.get("/api/health", (req, res) =>
@@ -151,36 +183,6 @@ small{color:#6b655c}
 // قائمة IP اختيارية + رفض طلبات التعديل القادمة من مصدر خارجي (CSRF).
 app.use(webSecurity());
 
-// ── ترويسات أساسية ─────────────────────────────────────────
-app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "same-origin");
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
-  // الموقع يُخدَم عبر HTTPS خلف CDN؛ HSTS يمنع الرجوع إلى http لاحقاً.
-  if (env.isProduction) {
-    res.setHeader("Strict-Transport-Security", "max-age=31536000");
-  }
-  res.setHeader(
-    "Content-Security-Policy",
-    [
-      "default-src 'self'",
-      // صور الشعار والمنتجات تُعرض من Supabase Storage العام.
-      `img-src 'self' data: blob: ${new URL(env.supabaseUrl).origin}`,
-      "font-src 'self'",
-      "style-src 'self'",
-      "script-src 'self'",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join("; ")
-  );
-  next();
-});
-
 // ── الملفات الثابتة ────────────────────────────────────────
 // على Netlify يتكبّل CDN بهذه الملفات، فلا تصل أصلاً إلى الدالة.
 const staticOptions = {
@@ -210,6 +212,8 @@ app.use(async (req, res, next) => {
   res.locals.appName = "ستور";
   res.locals.appTagline = "لوحة المدير";
   res.locals.assetBase = assetBase;
+  // تستخدمه القوالب لعرض وصف صحيح في الوضعين (مستضاف / تطوير محلي).
+  res.locals.isHosted = isServerless || env.isProduction;
   res.locals.pendingReviews = 0;
 
   // عدّاد التقييمات بانتظار المراجعة — لصفحات HTML فقط، وبعد الدخول.

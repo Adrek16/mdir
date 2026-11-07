@@ -43,7 +43,7 @@
   </nav>
 
   <div class="m-sidebar__foot">
-    <p>خادم محلي</p>
-    <p class="m-sidebar__foot-note">لا يُنشر على الإنترنت</p>
+    <p><%= isHosted ? "لوحة مستضافة" : "خادم التطوير المحلي" %></p>
+    <p class="m-sidebar__foot-note"><%= isHosted ? "جلسة موقّعة • 8 ساعات" : "يعمل على هذا الجهاز" %></p>
   </div>
 </aside>
